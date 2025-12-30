@@ -1,0 +1,55 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:gravity="center">
+
+    <EditText
+        android:id="@+id/edit_text_exercise_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Übungsname eingeben"
+        android:inputType="textCapSentences"
+        android:minHeight="48dp"
+        android:background="@android:color/white"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <EditText
+        android:id="@+id/edit_text_exercise_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Untertitel (z.B. Beinübung)"
+        android:inputType="textCapSentences"
+        android:minHeight="48dp"
+        android:background="@android:color/white"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wochentag wählen:"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="8dp"/>
+
+    <Spinner
+        android:id="@+id/spinner_day"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@android:color/white"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/button_save_exercise"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Speichern"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>

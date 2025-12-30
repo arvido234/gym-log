@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:fitsSystemWindows="true"
+    android:background="@color/gym_background">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Einstellungen"
+        android:textColor="@color/text_primary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ansicht"
+        android:textColor="@color/gym_primary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <Switch
+        android:id="@+id/switch_show_subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Untertitel anzeigen (z.B. Beinübung)"
+        android:textColor="@color/text_primary"
+        android:minHeight="48dp"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sprache"
+        android:textColor="@color/gym_primary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <RadioGroup
+        android:id="@+id/radio_group_language"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp">
+        <RadioButton
+            android:id="@+id/radio_german"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Deutsch"
+            android:textColor="@color/text_primary"/>
+        <RadioButton
+            android:id="@+id/radio_english"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="English"
+            android:textColor="@color/text_primary"/>
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Eintrags-Felder"
+        android:textColor="@color/gym_primary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <Switch
+        android:id="@+id/switch_field_sets"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sätze"
+        android:textColor="@color/text_primary"
+        android:checked="true"
+        android:minHeight="40dp"/>
+    
+    <Switch
+        android:id="@+id/switch_field_reps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Wiederholungen"
+        android:textColor="@color/text_primary"
+        android:checked="true"
+        android:minHeight="40dp"/>
+
+    <Switch
+        android:id="@+id/switch_field_weight"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Gewicht"
+        android:textColor="@color/text_primary"
+        android:checked="true"
+        android:minHeight="40dp"/>
+
+    <Switch
+        android:id="@+id/switch_field_rpe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="RPE"
+        android:textColor="@color/text_primary"
+        android:checked="true"
+        android:layout_marginBottom="24dp"
+        android:minHeight="40dp"/>
+
+    <Button
+        android:id="@+id/button_save_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Speichern &amp; Schließen" />
+
+</LinearLayout>

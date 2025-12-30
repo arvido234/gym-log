@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Gym Log</string>
+    <string name="title_history_activity">History</string>
+    <string name="default_exercise_name">New Exercise</string>
+    
+    <!-- General -->
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="settings">Settings</string>
+    
+    <!-- Days -->
+    <string name="day_monday">Monday</string>
+    <string name="day_tuesday">Tuesday</string>
+    <string name="day_wednesday">Wednesday</string>
+    <string name="day_thursday">Thursday</string>
+    <string name="day_friday">Friday</string>
+    <string name="day_saturday">Saturday</string>
+    <string name="day_sunday">Sunday</string>
+    <string name="day_unknown">No Day</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_log_title">Log: %1$s</string>
+    <string name="dialog_new_entry">New Entry: %1$s</string>
+    <string name="hint_sets">Sets</string>
+    <string name="hint_reps">Reps</string>
+    <string name="hint_weight">Weight (kg)</string>
+    <string name="hint_rpe">RPE (1-10)</string>
+    <string name="error_fill_fields">Please fill all fields</string>
+    <string name="error_invalid_input">Invalid Input</string>
+    <string name="msg_saved">Saved</string>
+    <string name="req_fields">Please fill required fields</string>
+
+    <!-- Settings -->
+    <string name="pref_view">Appearance</string>
+    <string name="pref_show_subtitle">Show Subtitle</string>
+    <string name="pref_language">Language</string>
+    <string name="pref_lang_de">Deutsch</string>
+    <string name="pref_lang_en">English</string>
+    <string name="pref_log_fields">Log Fields</string>
+    <string name="pref_save_close">Save &amp; Close</string>
+
+    <!-- New Exercise -->
+    <string name="label_name">Exercise Name</string>
+    <string name="label_day">Day</string>
+    <string name="hint_subtitle">Subtitle (e.g. Legs)</string>
+    <string name="error_name_empty">Name cannot be empty</string>
+    <string name="btn_create">Create</string>
+</resources>

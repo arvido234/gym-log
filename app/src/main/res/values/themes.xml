@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basistheme für die Anwendung. -->
+    <style name="Theme.GymLog" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/gym_primary</item>
+        <item name="colorPrimaryVariant">@color/gym_background</item>
+        <item name="colorOnPrimary">@color/gym_on_primary</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/gym_secondary</item>
+        <item name="colorOnSecondary">@color/gym_background</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/gym_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- Backgrounds -->
+        <item name="android:windowBackground">@color/gym_background</item>
+        <item name="android:colorBackground">@color/gym_background</item>
+    </style>
+</resources>
