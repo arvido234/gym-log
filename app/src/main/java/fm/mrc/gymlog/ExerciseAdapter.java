@@ -23,6 +23,7 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public interface AdapterCallbacks {
         void onDeleteExercise(Exercise exercise, int position);
+        void onEditExercise(Exercise exercise);
         void onExerciseClick(Exercise exercise);
         void onQuickLogClick(Exercise exercise);
         void onHistoryClick(Exercise exercise);
@@ -91,11 +92,25 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                         currentItem.lastLogWeight);
                 exHolder.lastLogTextView.setText(lastLog);
             } else {
-                exHolder.lastLogTextView.setText("Noch keine Logs");
+                exHolder.lastLogTextView.setText("Noch keine Logs"); // Should localize this too later
             }
 
-            exHolder.deleteButton.setOnClickListener(v -> {
-                if (callbacks != null) callbacks.onDeleteExercise(exercise, position);
+            exHolder.optionsButton.setOnClickListener(v -> {
+                android.widget.PopupMenu popup = new android.widget.PopupMenu(v.getContext(), v);
+                popup.getMenu().add(0, 1, 0, v.getContext().getString(R.string.edit));
+                popup.getMenu().add(0, 2, 0, v.getContext().getString(R.string.delete));
+                
+                popup.setOnMenuItemClickListener(item -> {
+                    if (item.getItemId() == 1) {
+                         if (callbacks != null) callbacks.onEditExercise(exercise);
+                         return true;
+                    } else if (item.getItemId() == 2) {
+                         if (callbacks != null) callbacks.onDeleteExercise(exercise, position);
+                         return true;
+                    }
+                    return false;
+                });
+                popup.show();
             });
 
             exHolder.quickLogButton.setOnClickListener(v -> {
@@ -130,7 +145,7 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView nameTextView;
         public TextView descriptionTextView;
         public TextView lastLogTextView;
-        public ImageButton deleteButton;
+        public ImageButton optionsButton;
         public ImageButton quickLogButton;
         public ImageButton historyButton;
 
@@ -139,7 +154,7 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             nameTextView = itemView.findViewById(R.id.text_view_exercise_name);
             descriptionTextView = itemView.findViewById(R.id.text_view_exercise_description);
             lastLogTextView = itemView.findViewById(R.id.text_view_last_log);
-            deleteButton = itemView.findViewById(R.id.button_delete_exercise);
+            optionsButton = itemView.findViewById(R.id.button_options);
             quickLogButton = itemView.findViewById(R.id.button_quick_log);
             historyButton = itemView.findViewById(R.id.button_history);
         }

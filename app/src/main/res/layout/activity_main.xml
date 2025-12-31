@@ -43,7 +43,7 @@
                 android:id="@+id/button_history"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Gesamtverlauf"
+                android:text="@string/title_history_activity"
                 android:textColor="@color/gym_primary"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 app:icon="@android:drawable/ic_menu_sort_by_size"

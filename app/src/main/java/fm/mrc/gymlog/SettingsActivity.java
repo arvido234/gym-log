@@ -8,7 +8,7 @@ import android.widget.RadioGroup;
 import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     public static final String PREFS_NAME = "GymLogPrefs";
     public static final String KEY_SHOW_SUBTITLE = "show_subtitle";
@@ -66,6 +66,14 @@ public class SettingsActivity extends AppCompatActivity {
             editor.putString(KEY_LANGUAGE, selectedLang);
             
             editor.apply();
+
+            // Restart to apply changes
+            android.content.Intent i = getBaseContext().getPackageManager()
+                    .getLaunchIntentForPackage(getBaseContext().getPackageName());
+            if (i != null) {
+                i.addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP | android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+            }
             finish();
         });
     }

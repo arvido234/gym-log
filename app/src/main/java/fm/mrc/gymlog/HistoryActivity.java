@@ -33,7 +33,7 @@ import fm.mrc.gymlog.data.AppDatabase;
 import fm.mrc.gymlog.data.LogEntry;
 import fm.mrc.gymlog.data.LogEntryDao;
 
-public class HistoryActivity extends AppCompatActivity implements HistoryAdapter.LogCallbacks {
+public class HistoryActivity extends BaseActivity implements HistoryAdapter.LogCallbacks {
 
     private HistoryAdapter historyAdapter;
     private List<LogEntry> allLogEntries = new ArrayList<>();
@@ -160,7 +160,7 @@ public class HistoryActivity extends AppCompatActivity implements HistoryAdapter
 
     private void showAddLogDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Neuer Eintrag: " + (exerciseName != null ? exerciseName : ""));
+        builder.setTitle(getString(R.string.dialog_new_entry, (exerciseName != null ? exerciseName : "")));
 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -173,32 +173,32 @@ public class HistoryActivity extends AppCompatActivity implements HistoryAdapter
         boolean showRPE = prefs.getBoolean(SettingsActivity.KEY_FIELD_RPE, true);
 
         final EditText setsInput = new EditText(this);
-        setsInput.setHint("Sätze");
+        setsInput.setHint(getString(R.string.hint_sets));
         setsInput.setInputType(InputType.TYPE_CLASS_NUMBER);
         if (!showSets) setsInput.setVisibility(android.view.View.GONE);
         layout.addView(setsInput);
 
         final EditText repsInput = new EditText(this);
-        repsInput.setHint("Wiederholungen");
+        repsInput.setHint(getString(R.string.hint_reps));
         repsInput.setInputType(InputType.TYPE_CLASS_NUMBER);
         if (!showReps) repsInput.setVisibility(android.view.View.GONE);
         layout.addView(repsInput);
 
         final EditText weightInput = new EditText(this);
-        weightInput.setHint("Gewicht (kg)");
+        weightInput.setHint(getString(R.string.hint_weight));
         weightInput.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         if (!showWeight) weightInput.setVisibility(android.view.View.GONE);
         layout.addView(weightInput);
 
         final EditText rpeInput = new EditText(this);
-        rpeInput.setHint("RPE (1-10)");
+        rpeInput.setHint(getString(R.string.hint_rpe));
         rpeInput.setInputType(InputType.TYPE_CLASS_NUMBER);
         if (!showRPE) rpeInput.setVisibility(android.view.View.GONE);
         layout.addView(rpeInput);
 
         builder.setView(layout);
 
-        builder.setPositiveButton("Speichern", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.save), (dialog, which) -> {
             try {
                 String setsStr = setsInput.getText().toString();
                 String repsStr = repsInput.getText().toString();
@@ -208,7 +208,7 @@ public class HistoryActivity extends AppCompatActivity implements HistoryAdapter
                 if ((showSets && setsStr.isEmpty()) || 
                     (showReps && repsStr.isEmpty()) || 
                     (showWeight && weightStr.isEmpty())) {
-                    Toast.makeText(HistoryActivity.this, "Bitte angezeigte Felder ausfüllen", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HistoryActivity.this, getString(R.string.req_fields), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -220,11 +220,11 @@ public class HistoryActivity extends AppCompatActivity implements HistoryAdapter
                 addLogEntry(new LogEntry(exerciseId, System.currentTimeMillis(), sets, reps, weight, rpe));
 
             } catch (NumberFormatException e) {
-                Toast.makeText(HistoryActivity.this, "Ungültige Eingabe", Toast.LENGTH_SHORT).show();
+                Toast.makeText(HistoryActivity.this, getString(R.string.error_invalid_input), Toast.LENGTH_SHORT).show();
             }
         });
 
-        builder.setNegativeButton("Abbrechen", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
         builder.show();
     }
 

@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Einstellungen"
+        android:text="@string/settings"
         android:textColor="@color/text_primary"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -19,7 +19,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Ansicht"
+        android:text="@string/pref_view"
         android:textColor="@color/gym_primary"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -29,7 +29,7 @@
         android:id="@+id/switch_show_subtitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Untertitel anzeigen (z.B. Beinübung)"
+        android:text="@string/pref_show_subtitle"
         android:textColor="@color/text_primary"
         android:minHeight="48dp"
         android:layout_marginBottom="24dp"/>
@@ -37,7 +37,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sprache"
+        android:text="@string/pref_language"
         android:textColor="@color/gym_primary"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -52,20 +52,20 @@
             android:id="@+id/radio_german"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Deutsch"
+            android:text="@string/pref_lang_de"
             android:textColor="@color/text_primary"/>
         <RadioButton
             android:id="@+id/radio_english"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="English"
+            android:text="@string/pref_lang_en"
             android:textColor="@color/text_primary"/>
     </RadioGroup>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Eintrags-Felder"
+        android:text="@string/pref_log_fields"
         android:textColor="@color/gym_primary"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -75,7 +75,7 @@
         android:id="@+id/switch_field_sets"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sätze"
+        android:text="@string/hint_sets"
         android:textColor="@color/text_primary"
         android:checked="true"
         android:minHeight="40dp"/>
@@ -84,7 +84,7 @@
         android:id="@+id/switch_field_reps"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Wiederholungen"
+        android:text="@string/hint_reps"
         android:textColor="@color/text_primary"
         android:checked="true"
         android:minHeight="40dp"/>
@@ -102,7 +102,7 @@
         android:id="@+id/switch_field_rpe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="RPE"
+        android:text="@string/hint_rpe"
         android:textColor="@color/text_primary"
         android:checked="true"
         android:layout_marginBottom="24dp"
@@ -112,6 +112,6 @@
         android:id="@+id/button_save_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Speichern &amp; Schließen" />
+        android:text="@string/pref_save_close" />
 
 </LinearLayout>

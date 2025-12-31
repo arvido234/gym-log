@@ -7,6 +7,7 @@
     <!-- General -->
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="settings">Settings</string>
     
@@ -43,6 +44,7 @@
 
     <!-- New Exercise -->
     <string name="label_name">Exercise Name</string>
+    <string name="label_subtitle">Subtitle</string>
     <string name="label_day">Day</string>
     <string name="hint_subtitle">Subtitle (e.g. Legs)</string>
     <string name="error_name_empty">Name cannot be empty</string>

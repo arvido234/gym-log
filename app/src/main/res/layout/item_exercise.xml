@@ -52,13 +52,13 @@
                 app:tint="@color/text_secondary" />
                 
              <ImageButton
-                android:id="@+id/button_delete_exercise"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@android:drawable/ic_menu_delete"
+                android:id="@+id/button_options"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@android:drawable/ic_menu_more"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Löschen"
-                app:tint="@color/gym_error" />
+                android:contentDescription="@string/settings"
+                app:tint="@color/text_secondary" />
         </LinearLayout>
 
         <TextView

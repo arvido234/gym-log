@@ -1,9 +1,8 @@
 package fm.mrc.gymlog;
 
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class NewExerciseActivity extends AppCompatActivity {
+public class NewExerciseActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -7,6 +7,7 @@
     <!-- General -->
     <string name="cancel">Abbrechen</string>
     <string name="save">Speichern</string>
+    <string name="edit">Bearbeiten</string>
     <string name="delete">Löschen</string>
     <string name="settings">Einstellungen</string>
     
@@ -43,6 +44,7 @@
 
     <!-- New Exercise -->
     <string name="label_name">Name der Übung</string>
+    <string name="label_subtitle">Untertitel</string>
     <string name="label_day">Tag</string>
     <string name="hint_subtitle">Untertitel (z.B. Beinübung)</string>
     <string name="error_name_empty">Name darf nicht leer sein</string>

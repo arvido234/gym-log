@@ -16,7 +16,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements ExerciseAdapter.AdapterCallbacks {
+public class MainActivity extends BaseActivity implements ExerciseAdapter.AdapterCallbacks {
 
     private ExerciseAdapter adapter;
     private AppDatabase db;
@@ -114,7 +114,12 @@ public class MainActivity extends AppCompatActivity implements ExerciseAdapter.A
             String d2 = e2.getExercise().day != null ? e2.getExercise().day : "";
             int o1 = dayOrder.getOrDefault(d1, 99);
             int o2 = dayOrder.getOrDefault(d2, 99);
-            return Integer.compare(o1, o2);
+            
+            int orderResult = Integer.compare(o1, o2);
+            if (orderResult == 0) {
+                 return Integer.compare(e1.getExercise().sortOrder, e2.getExercise().sortOrder);
+            }
+            return orderResult;
         });
 
         // Build list with headers
@@ -122,17 +127,30 @@ public class MainActivity extends AppCompatActivity implements ExerciseAdapter.A
         String currentDay = null;
 
         for (ExerciseWithLastLog item : exercises) {
-            String day = item.getExercise().day;
-            if (day == null || day.isEmpty()) day = "Ohne Tag";
+            String dayKey = item.getExercise().day;
+            if (dayKey == null || dayKey.isEmpty()) dayKey = "Ohne Tag";
 
-            if (!day.equals(currentDay)) {
-                items.add(day);
-                currentDay = day;
+            if (!dayKey.equals(currentDay)) {
+                items.add(getDayDisplayString(dayKey));
+                currentDay = dayKey;
             }
             items.add(item);
         }
 
         adapter.setItems(items);
+    }
+
+    private String getDayDisplayString(String dayKey) {
+        switch (dayKey) {
+            case "Montag": return getString(R.string.day_monday);
+            case "Dienstag": return getString(R.string.day_tuesday);
+            case "Mittwoch": return getString(R.string.day_wednesday);
+            case "Donnerstag": return getString(R.string.day_thursday);
+            case "Freitag": return getString(R.string.day_friday);
+            case "Samstag": return getString(R.string.day_saturday);
+            case "Sonntag": return getString(R.string.day_sunday);
+            default: return getString(R.string.day_unknown);
+        }
     }
 
     @Override
@@ -162,9 +180,98 @@ public class MainActivity extends AppCompatActivity implements ExerciseAdapter.A
         showAddLogDialog(exercise);
     }
 
+    @Override
+    public void onEditExercise(Exercise exercise) {
+        showEditExerciseDialog(exercise);
+    }
+
+    private void showEditExerciseDialog(Exercise exercise) {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.edit) + ": " + exercise.name);
+
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.setPadding(32, 32, 32, 32);
+
+        // Name
+        final android.widget.TextView nameLabel = new android.widget.TextView(this);
+        nameLabel.setText(getString(R.string.label_name));
+        layout.addView(nameLabel);
+
+        final android.widget.EditText nameInput = new android.widget.EditText(this);
+        nameInput.setText(exercise.name);
+        layout.addView(nameInput);
+
+        // Subtitle
+        final android.widget.TextView subtitleLabel = new android.widget.TextView(this);
+        subtitleLabel.setText(getString(R.string.label_subtitle));
+        layout.addView(subtitleLabel);
+
+        final android.widget.EditText subtitleInput = new android.widget.EditText(this);
+        subtitleInput.setText(exercise.description);
+        subtitleInput.setHint(getString(R.string.hint_subtitle));
+        layout.addView(subtitleInput);
+
+        // Day Spinner
+        final android.widget.TextView dayLabel = new android.widget.TextView(this);
+        dayLabel.setText(getString(R.string.label_day));
+        layout.addView(dayLabel);
+
+        final android.widget.Spinner daySpinner = new android.widget.Spinner(this);
+        
+        // Days (DB Keys)
+        final String[] dbDays = {"Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag", "Ohne Tag"};
+        // Days (Display)
+        final String[] displayDays = {
+            getString(R.string.day_monday), getString(R.string.day_tuesday), getString(R.string.day_wednesday),
+            getString(R.string.day_thursday), getString(R.string.day_friday), getString(R.string.day_saturday),
+            getString(R.string.day_sunday), getString(R.string.day_unknown)
+        };
+        
+        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, displayDays);
+        daySpinner.setAdapter(adapter);
+
+        // Set extraction selection
+        String currentDay = exercise.day != null ? exercise.day : "Ohne Tag";
+        int selectionIndex = 7; // Default "Ohne Tag"
+        for (int i = 0; i < dbDays.length; i++) {
+            if (dbDays[i].equals(currentDay)) {
+                selectionIndex = i;
+                break;
+            }
+        }
+        daySpinner.setSelection(selectionIndex);
+        
+        layout.addView(daySpinner);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton(getString(R.string.save), (dialog, which) -> {
+            String newName = nameInput.getText().toString().trim();
+            if (newName.isEmpty()) {
+                android.widget.Toast.makeText(this, getString(R.string.error_name_empty), android.widget.Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            String newSubtitle = subtitleInput.getText().toString().trim();
+            int selectedPos = daySpinner.getSelectedItemPosition();
+            String newDay = dbDays[selectedPos]; // Map back to DB Key
+
+            exercise.name = newName;
+            exercise.description = newSubtitle;
+            exercise.day = newDay;
+
+            new Thread(() -> db.exerciseDao().update(exercise)).start();
+            android.widget.Toast.makeText(this, getString(R.string.msg_saved), android.widget.Toast.LENGTH_SHORT).show();
+        });
+
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
     private void showAddLogDialog(Exercise exercise) {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
-        builder.setTitle("Loggen: " + exercise.name);
+        builder.setTitle(getString(R.string.dialog_log_title, exercise.name));
 
         android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
         layout.setOrientation(android.widget.LinearLayout.VERTICAL);
@@ -177,32 +284,32 @@ public class MainActivity extends AppCompatActivity implements ExerciseAdapter.A
         boolean showRPE = prefs.getBoolean(SettingsActivity.KEY_FIELD_RPE, true);
 
         final android.widget.EditText setsInput = new android.widget.EditText(this);
-        setsInput.setHint("Sätze");
+        setsInput.setHint(getString(R.string.hint_sets));
         setsInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         if (!showSets) setsInput.setVisibility(View.GONE);
         layout.addView(setsInput);
 
         final android.widget.EditText repsInput = new android.widget.EditText(this);
-        repsInput.setHint("Wiederholungen");
+        repsInput.setHint(getString(R.string.hint_reps));
         repsInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         if (!showReps) repsInput.setVisibility(View.GONE);
         layout.addView(repsInput);
 
         final android.widget.EditText weightInput = new android.widget.EditText(this);
-        weightInput.setHint("Gewicht (kg)");
+        weightInput.setHint(getString(R.string.hint_weight));
         weightInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
         if (!showWeight) weightInput.setVisibility(View.GONE);
         layout.addView(weightInput);
 
         final android.widget.EditText rpeInput = new android.widget.EditText(this);
-        rpeInput.setHint("RPE (1-10)");
+        rpeInput.setHint(getString(R.string.hint_rpe));
         rpeInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         if (!showRPE) rpeInput.setVisibility(View.GONE);
         layout.addView(rpeInput);
 
         builder.setView(layout);
 
-        builder.setPositiveButton("Speichern", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.save), (dialog, which) -> {
             try {
                 String setsStr = setsInput.getText().toString();
                 String repsStr = repsInput.getText().toString();
@@ -212,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements ExerciseAdapter.A
                 if ((showSets && setsStr.isEmpty()) || 
                     (showReps && repsStr.isEmpty()) || 
                     (showWeight && weightStr.isEmpty())) {
-                    android.widget.Toast.makeText(this, "Bitte angezeigte Felder ausfüllen", android.widget.Toast.LENGTH_SHORT).show();
+                    android.widget.Toast.makeText(this, getString(R.string.req_fields), android.widget.Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -225,14 +332,14 @@ public class MainActivity extends AppCompatActivity implements ExerciseAdapter.A
                         exercise.exerciseId, System.currentTimeMillis(), sets, reps, weight, rpe);
                 
                 new Thread(() -> db.logEntryDao().insert(entry)).start();
-                 android.widget.Toast.makeText(this, "Gespeichert", android.widget.Toast.LENGTH_SHORT).show();
+                 android.widget.Toast.makeText(this, getString(R.string.msg_saved), android.widget.Toast.LENGTH_SHORT).show();
 
             } catch (NumberFormatException e) {
-                android.widget.Toast.makeText(this, "Ungültige Eingabe", android.widget.Toast.LENGTH_SHORT).show();
+                android.widget.Toast.makeText(this, getString(R.string.error_invalid_input), android.widget.Toast.LENGTH_SHORT).show();
             }
         });
 
-        builder.setNegativeButton("Abbrechen", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
         builder.show();
     }
 }
