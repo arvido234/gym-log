@@ -22,6 +22,9 @@
 * **UI Components:** Material Design 3 (Material You)
 * **Charts:** MPAndroidChart
 * **Architecture:** MVVM (Recommended for Room)
+ <img width="533" height="1105" alt="image" src="https://github.com/user-attachments/assets/e722bbc8-3292-4b03-932a-84bf3c5ac3fb" />
+<img width="530" height="1105" alt="image" src="https://github.com/user-attachments/assets/e8985f58-b07c-43be-85d5-6f66ce906c9e" />
+<img width="535" height="1105" alt="image" src="https://github.com/user-attachments/assets/f0977305-7139-4f09-84ae-f97d17f1be0b" />
 
 ---
 
