@@ -20,4 +20,13 @@
     <color name="text_primary">#FFFFFF</color>
     <color name="text_secondary">#B0B0B0</color>
     <color name="white_alpha_70">#B3FFFFFF</color> <!-- 70% Deckkraft von Weiß -->
+    
+    <!-- Alternative Accents -->
+    <color name="gym_primary_red">#FF1744</color>
+    <color name="gym_primary_green">#00E676</color>
+    <color name="gym_primary_orange">#FF9100</color>
+    <color name="gym_primary_purple">#D500F9</color>
+    
+    <!-- Backgrounds -->
+    <color name="gym_background_black">#000000</color>
 </resources>

@@ -1,117 +1,325 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:fitsSystemWindows="true"
     android:background="@color/gym_background">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/settings"
-        android:textColor="@color/text_primary"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="24dp"/>
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/pref_view"
-        android:textColor="@color/gym_primary"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <Switch
-        android:id="@+id/switch_show_subtitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pref_show_subtitle"
-        android:textColor="@color/text_primary"
-        android:minHeight="48dp"
-        android:layout_marginBottom="24dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings"
+            android:textColor="@color/text_primary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="24dp"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pref_language"
-        android:textColor="@color/gym_primary"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <RadioGroup
-        android:id="@+id/radio_group_language"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp">
-        <RadioButton
-            android:id="@+id/radio_german"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_lang_de"
-            android:textColor="@color/text_primary"/>
-        <RadioButton
-            android:id="@+id/radio_english"
+            android:text="@string/pref_view"
+            android:textColor="@color/gym_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <Switch
+            android:id="@+id/switch_show_subtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/pref_lang_en"
-            android:textColor="@color/text_primary"/>
-    </RadioGroup>
+            android:text="@string/pref_show_subtitle"
+            android:textColor="@color/text_primary"
+            android:minHeight="48dp"
+            android:layout_marginBottom="24dp"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pref_log_fields"
-        android:textColor="@color/gym_primary"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_notes"
+            android:textColor="@color/gym_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
 
-    <Switch
-        android:id="@+id/switch_field_sets"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hint_sets"
-        android:textColor="@color/text_primary"
-        android:checked="true"
-        android:minHeight="40dp"/>
-    
-    <Switch
-        android:id="@+id/switch_field_reps"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hint_reps"
-        android:textColor="@color/text_primary"
-        android:checked="true"
-        android:minHeight="40dp"/>
+        <Switch
+            android:id="@+id/switch_show_note_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_show_note_button"
+            android:textColor="@color/text_primary"
+            android:checked="true"
+            android:minHeight="40dp"/>
 
-    <Switch
-        android:id="@+id/switch_field_weight"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Gewicht"
-        android:textColor="@color/text_primary"
-        android:checked="true"
-        android:minHeight="40dp"/>
+        <Switch
+            android:id="@+id/switch_show_note_preview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_show_note_preview"
+            android:textColor="@color/text_primary"
+            android:checked="false"
+            android:layout_marginBottom="24dp"
+            android:minHeight="40dp"/>
+            
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_language"
+            android:textColor="@color/gym_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
 
-    <Switch
-        android:id="@+id/switch_field_rpe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/hint_rpe"
-        android:textColor="@color/text_primary"
-        android:checked="true"
-        android:layout_marginBottom="24dp"
-        android:minHeight="40dp"/>
+        <RadioGroup
+            android:id="@+id/radio_group_language"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
+            <RadioButton
+                android:id="@+id/radio_german"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pref_lang_de"
+                android:textColor="@color/text_primary"/>
+            <RadioButton
+                android:id="@+id/radio_english"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pref_lang_en"
+                android:textColor="@color/text_primary"/>
+        </RadioGroup>
 
-    <Button
-        android:id="@+id/button_save_settings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pref_save_close" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_log_fields"
+            android:textColor="@color/gym_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
 
-</LinearLayout>
+        <Switch
+            android:id="@+id/switch_field_sets"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hint_sets"
+            android:textColor="@color/text_primary"
+            android:checked="true"
+            android:minHeight="40dp"/>
+        
+        <Switch
+            android:id="@+id/switch_field_reps"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hint_reps"
+            android:textColor="@color/text_primary"
+            android:checked="true"
+            android:minHeight="40dp"/>
+
+        <Switch
+            android:id="@+id/switch_field_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gewicht"
+            android:textColor="@color/text_primary"
+            android:checked="true"
+            android:minHeight="40dp"/>
+
+        <Switch
+            android:id="@+id/switch_field_rpe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hint_rpe"
+            android:textColor="@color/text_primary"
+            android:checked="true"
+            android:layout_marginBottom="24dp"
+            android:minHeight="40dp"/>
+            
+        <Switch
+            android:id="@+id/switch_show_1rm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_show_1rm"
+            android:textColor="@color/text_primary"
+            android:checked="true"
+            android:layout_marginBottom="24dp"
+            android:minHeight="40dp"/>
+
+        <Switch
+            android:id="@+id/switch_show_streak"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_show_streak"
+            android:textColor="@color/text_primary"
+            android:checked="true"
+            android:layout_marginBottom="8dp"
+            android:minHeight="40dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+            
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/lbl_streak_freq"
+                android:textColor="@color/text_primary"/>
+            
+            <Spinner
+                android:id="@+id/spinner_streak_freq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+        
+        <Switch
+            android:id="@+id/switch_glass_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_glass_mode"
+            android:textColor="@color/text_primary"
+            android:checked="false"
+            android:minHeight="48dp"
+            android:layout_marginBottom="24dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_theme"
+            android:textColor="@color/gym_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+            
+            <RadioGroup
+                android:id="@+id/radio_group_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                
+                <RadioButton
+                    android:id="@+id/radio_theme_blue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_blue"
+                    android:textColor="@color/text_primary"
+                    android:paddingEnd="16dp"/>
+                
+                <RadioButton
+                    android:id="@+id/radio_theme_red"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_red"
+                    android:textColor="@color/text_primary"
+                    android:paddingEnd="16dp"/>
+
+                <RadioButton
+                    android:id="@+id/radio_theme_green"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_green"
+                    android:textColor="@color/text_primary"
+                    android:paddingEnd="16dp"/>
+                    
+                <RadioButton
+                    android:id="@+id/radio_theme_orange"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_orange"
+                    android:textColor="@color/text_primary"
+                    android:paddingEnd="16dp"/>
+                    
+                <RadioButton
+                    android:id="@+id/radio_theme_purple"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_purple"
+                    android:textColor="@color/text_primary"
+                    android:paddingEnd="16dp"/>
+
+            </RadioGroup>
+        </HorizontalScrollView>
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_background"
+            android:textColor="@color/gym_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"/>
+            
+        <RadioGroup
+            android:id="@+id/radio_group_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp">
+            <RadioButton
+                android:id="@+id/radio_bg_charcoal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bg_charcoal"
+                android:textColor="@color/text_primary"/>
+            <RadioButton
+                android:id="@+id/radio_bg_black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bg_black"
+                android:textColor="@color/text_primary"/>
+            <RadioButton
+                android:id="@+id/radio_bg_gradient_midnight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bg_gradient_midnight"
+                android:textColor="@color/text_primary"/>
+            <RadioButton
+                android:id="@+id/radio_bg_gradient_sunrise"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/bg_gradient_sunrise"
+                android:textColor="@color/text_primary"/>
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <RadioButton
+                    android:id="@+id/radio_bg_custom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/bg_custom"
+                    android:textColor="@color/text_primary"/>
+                <Button
+                    android:id="@+id/button_pick_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_pick_image"
+                    android:layout_marginStart="16dp"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"/>
+            </LinearLayout>
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/button_save_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_save_close"
+             />
+
+    </LinearLayout>
+</ScrollView>

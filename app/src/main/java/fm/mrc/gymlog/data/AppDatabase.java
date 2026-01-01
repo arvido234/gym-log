@@ -7,13 +7,14 @@ import androidx.room.RoomDatabase;
 
 // ... (alle anderen Imports)
 
-@Database(entities = {Exercise.class, LogEntry.class, WorkoutDay.class, DayExerciseCrossRef.class}, version = 5, exportSchema = false)
+@Database(entities = {Exercise.class, LogEntry.class, WorkoutDay.class, DayExerciseCrossRef.class, StreakCheckIn.class}, version = 8, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
 
     public abstract ExerciseDao exerciseDao();
     public abstract LogEntryDao logEntryDao();
     public abstract WorkoutDayDao workoutDayDao();
+    public abstract StreakCheckInDao streakCheckInDao();
 
     // Die Methode, die in MainActivity aufgerufen werden muss (Behebt Fehler 4)
     public static synchronized AppDatabase getInstance(Context context) {

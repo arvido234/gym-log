@@ -7,4 +7,8 @@
         android:title="Einstellungen"
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_statistics"
+        android:title="@string/action_statistics"
+        app:showAsAction="never" />
 </menu>

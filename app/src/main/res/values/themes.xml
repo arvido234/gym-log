@@ -16,4 +16,28 @@
         <item name="android:windowBackground">@color/gym_background</item>
         <item name="android:colorBackground">@color/gym_background</item>
     </style>
+
+    <!-- Theme Variants -->
+    <style name="Theme.GymLog.Red" parent="Theme.GymLog">
+        <item name="colorPrimary">@color/gym_primary_red</item>
+        <item name="colorSecondary">@color/gym_primary_red</item>
+    </style>
+
+    <style name="Theme.GymLog.Green" parent="Theme.GymLog">
+        <item name="colorPrimary">@color/gym_primary_green</item>
+        <item name="colorSecondary">@color/gym_primary_green</item>
+    </style>
+
+    <style name="Theme.GymLog.Orange" parent="Theme.GymLog">
+        <item name="colorPrimary">@color/gym_primary_orange</item>
+        <item name="colorSecondary">@color/gym_primary_orange</item>
+    </style>
+    
+    <style name="Theme.GymLog.Purple" parent="Theme.GymLog">
+        <item name="colorPrimary">@color/gym_primary_purple</item>
+        <item name="colorSecondary">@color/gym_primary_purple</item>
+    </style>
+    
+    <!-- Black Background Variant (can be combined programmatically or separate) -->
+    <!-- For simplicity, we just handle background in a base activity or straightforward way -->
 </resources>

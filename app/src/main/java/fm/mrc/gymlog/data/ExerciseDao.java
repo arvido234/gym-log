@@ -28,6 +28,9 @@ public interface ExerciseDao {
     @Query("SELECT * FROM exercises ORDER BY name ASC")
     LiveData<List<Exercise>> getAllExercises();
 
+    @Query("SELECT * FROM exercises ORDER BY name ASC")
+    List<Exercise> getAllExercisesSync();
+
     @Query("SELECT * FROM exercises WHERE exerciseId = :exerciseId")
     LiveData<Exercise> getExerciseById(long exerciseId);
 

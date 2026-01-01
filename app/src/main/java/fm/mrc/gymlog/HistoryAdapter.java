@@ -51,15 +51,60 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         return new HistoryViewHolder(view);
     }
 
+    private boolean showSets = true;
+    private boolean showReps = true;
+    private boolean showWeight = true;
+    private boolean showRPE = true;
+
+    public void setFieldVisibility(boolean showSets, boolean showReps, boolean showWeight, boolean showRPE) {
+        this.showSets = showSets;
+        this.showReps = showReps;
+        this.showWeight = showWeight;
+        this.showRPE = showRPE;
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         LogEntry currentItem = logEntryList.get(position);
 
         holder.dateTextView.setText(dateFormat.format(new Date(currentItem.timestamp)));
 
-        String details = String.format(Locale.getDefault(), "%d Sätze x %d Wdh. @ %.1f kg (RPE %d)",
-                currentItem.sets, currentItem.reps, currentItem.weight, currentItem.rpe);
-        holder.detailsTextView.setText(details);
+        StringBuilder sb = new StringBuilder();
+        
+        boolean hasSets = showSets && currentItem.sets > 0;
+        boolean hasReps = showReps && currentItem.reps > 0;
+        boolean hasWeight = showWeight && currentItem.weight > 0;
+        boolean hasRPE = showRPE && currentItem.rpe > 0;
+
+        if (hasSets) {
+            sb.append(currentItem.sets);
+        }
+
+        if (hasSets && hasReps) {
+            sb.append(" x ");
+        }
+
+        if (hasReps) {
+            sb.append(currentItem.reps).append(" Wdh.");
+        }
+        
+        if (hasWeight) {
+            if (sb.length() > 0) sb.append(" @ ");
+            sb.append(String.format(Locale.getDefault(), "%.1f kg", currentItem.weight));
+        }
+        
+        if (hasRPE) {
+            if (sb.length() > 0) sb.append("  (RPE ");
+            else sb.append("RPE ");
+            sb.append(currentItem.rpe).append(")");
+        }
+        
+        if (sb.length() == 0) {
+             holder.detailsTextView.setText("Gespeichert");
+        } else {
+             holder.detailsTextView.setText(sb.toString());
+        }
 
         holder.deleteButton.setOnClickListener(v -> {
             if (callbacks != null) {

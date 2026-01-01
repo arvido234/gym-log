@@ -10,6 +10,12 @@
     <string name="edit">Bearbeiten</string>
     <string name="delete">Löschen</string>
     <string name="settings">Einstellungen</string>
+    <string name="note">Notiz</string>
+    <string name="edit_note">Notiz bearbeiten</string>
+    <string name="hint_note">Hier Notiz eingeben...</string>
+    <string name="pref_notes">Notizen</string>
+    <string name="pref_show_note_button">Notiz-Funktion aktivieren (Icon)</string>
+    <string name="pref_show_note_preview">Notiz direkt auf Karte anzeigen</string>
     
     <!-- Days -->
     <string name="day_monday">Montag</string>
@@ -40,6 +46,7 @@
     <string name="pref_lang_de">Deutsch</string>
     <string name="pref_lang_en">English</string>
     <string name="pref_log_fields">Eintrags-Felder</string>
+    <string name="pref_glass_mode">"iOS 26" Glass Mode</string>
     <string name="pref_save_close">Speichern &amp; Schließen</string>
 
     <!-- New Exercise -->
@@ -49,4 +56,49 @@
     <string name="hint_subtitle">Untertitel (z.B. Beinübung)</string>
     <string name="error_name_empty">Name darf nicht leer sein</string>
     <string name="btn_create">Erstellen</string>
+    <string name="pref_theme">Farbschema</string>
+    <string name="theme_blue">Blau (Standard)</string>
+    <string name="theme_red">Rot</string>
+    <string name="theme_green">Grün</string>
+    <string name="theme_orange">Orange</string>
+    <string name="theme_purple">Lila</string>
+    <string name="pref_background">Hintergrund</string>
+    <string name="bg_charcoal">Deep Charcoal</string>
+    <string name="bg_black">OLED Schwarz</string>
+    <string name="bg_gradient_midnight">Mitternacht (Verlauf)</string>
+    <string name="bg_gradient_sunrise">Sunrise (Verlauf)</string>
+    <string name="bg_custom">Eigenes Bild</string>
+    <string name="btn_pick_image">Bild auswählen</string>
+
+    <!-- Muscle Groups -->
+    <string name="label_muscle_group">Muskelgruppe</string>
+    <string name="muscle_chest">Brust</string>
+    <string name="muscle_back">Rücken</string>
+    <string name="muscle_legs">Beine</string>
+    <string name="muscle_shoulders">Schultern</string>
+    <string name="muscle_arms">Arme</string>
+    <string name="muscle_core">Rumpf (Core)</string>
+    <string name="muscle_other">Andere</string>
+    
+    <!-- Export -->
+    <string name="pref_export_import">Datenverwaltung</string>
+    <string name="btn_export_json">Daten exportieren (JSON)</string>
+    <string name="msg_export_success">Exportiert nach Downloads: %1$s</string>
+    <string name="msg_export_failed">Export fehlgeschlagen</string>
+    
+    <!-- 1RM -->
+    <string name="est_1rm">Geschätztes 1RM: %1$s kg</string>
+    <string name="pref_show_1rm">1RM Rechner anzeigen</string>
+
+    <!-- Statistics -->
+    <string name="action_statistics">Statistiken</string>
+    <string name="title_muscle_stats">Wochen-Übersicht</string>
+    <string name="stats_sets_format">%1$s: %2$d Sätze</string>
+    <string name="stats_empty">Keine Trainingsdaten diese Woche.</string>
+
+    <!-- Streak -->
+    <string name="pref_show_streak">Wochen-Streak anzeigen</string>
+    <string name="text_streak_message">🔥 %d Wochen Streak!</string>
+    <string name="text_streak_none">Trainiere diese Woche für den Streak!</string>
+    <string name="lbl_streak_freq">Ziel: Trainingstage pro Woche</string>
 </resources>

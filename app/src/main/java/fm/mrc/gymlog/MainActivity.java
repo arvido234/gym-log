@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,10 +23,14 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
     private AppDatabase db;
     private RecyclerView recyclerView;
 
+    private TextView streakTextView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        streakTextView = findViewById(R.id.text_streak_indicator);
 
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.topAppBar);
         setSupportActionBar(toolbar);
@@ -67,17 +72,66 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
                 startActivity(new Intent(MainActivity.this, NewExerciseActivity.class));
             });
         }
+        
+        checkStreak();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        
+        checkStreak();
+
         // Load settings and update adapter
         android.content.SharedPreferences prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, MODE_PRIVATE);
         boolean showSubtitle = prefs.getBoolean(SettingsActivity.KEY_SHOW_SUBTITLE, false);
+        boolean showSets = prefs.getBoolean(SettingsActivity.KEY_FIELD_SETS, true);
+        boolean showReps = prefs.getBoolean(SettingsActivity.KEY_FIELD_REPS, true);
+        boolean showWeight = prefs.getBoolean(SettingsActivity.KEY_FIELD_WEIGHT, true);
+        boolean enableNotes = prefs.getBoolean(SettingsActivity.KEY_ENABLE_NOTES, true);
+        boolean showInlineNote = prefs.getBoolean(SettingsActivity.KEY_SHOW_INLINE_NOTE, false);
+        boolean glassMode = prefs.getBoolean(SettingsActivity.KEY_GLASS_MODE, false);
+        
         if (adapter != null) {
             adapter.setShowSubtitle(showSubtitle);
+            adapter.setFieldVisibility(showSets, showReps, showWeight);
+            adapter.setNoteSettings(enableNotes, showInlineNote);
+            adapter.setGlassMode(glassMode);
         }
+    }
+    
+    private void checkStreak() {
+        android.content.SharedPreferences prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, MODE_PRIVATE);
+        boolean showStreak = prefs.getBoolean(SettingsActivity.KEY_SHOW_STREAK, true);
+        int targetFreq = prefs.getInt(SettingsActivity.KEY_STREAK_FREQUENCY, 1);
+        
+        if (!showStreak) {
+            if (streakTextView != null) streakTextView.setVisibility(android.view.View.GONE);
+            return;
+        }
+
+        streakTextView.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, StreakActivity.class)));
+
+        new Thread(() -> {
+            AppDatabase db = AppDatabase.getInstance(this);
+            java.util.List<Long> logDates = db.logEntryDao().getDistinctTimestamps();
+            java.util.List<Long> checkDates = null;
+            try {
+                checkDates = db.streakCheckInDao().getAllCheckInTimestamps();
+            } catch (Exception e) { /* Entity might not exist if migration failed, but here we assume clean install or compatible */ }
+            
+            int streak = fm.mrc.gymlog.util.StreakCalculator.calculateWeeklyStreak(logDates, checkDates, targetFreq);
+            
+            runOnUiThread(() -> {
+                if (streakTextView == null) return;
+                streakTextView.setVisibility(android.view.View.VISIBLE);
+                if (streak > 0) {
+                    streakTextView.setText(getString(R.string.text_streak_message, streak));
+                } else {
+                     streakTextView.setText(R.string.text_streak_none);
+                }
+            });
+        }).start();
     }
 
     @Override
@@ -90,6 +144,9 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
     public boolean onOptionsItemSelected(@androidx.annotation.NonNull android.view.MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        } else if (item.getItemId() == R.id.action_statistics) {
+            startActivity(new Intent(this, MuscleStatsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -185,6 +242,42 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
         showEditExerciseDialog(exercise);
     }
 
+    @Override
+    public void onNoteClick(Exercise exercise) {
+        showNoteDialog(exercise);
+    }
+
+    private void showNoteDialog(Exercise exercise) {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.edit_note) + ": " + exercise.name);
+
+        final android.widget.EditText input = new android.widget.EditText(this);
+        input.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+        input.setMinLines(3);
+        input.setGravity(android.view.Gravity.TOP | android.view.Gravity.START);
+        input.setText(exercise.notes != null ? exercise.notes : "");
+        input.setHint(getString(R.string.hint_note));
+        
+        // Add some padding
+        android.widget.FrameLayout container = new android.widget.FrameLayout(this);
+        android.widget.FrameLayout.LayoutParams params = new android.widget.FrameLayout.LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.leftMargin = 50; // px or use dp conversion
+        params.rightMargin = 50;
+        input.setLayoutParams(params);
+        container.addView(input);
+        
+        builder.setView(container);
+
+        builder.setPositiveButton(getString(R.string.save), (dialog, which) -> {
+            exercise.notes = input.getText().toString().trim();
+            new Thread(() -> db.exerciseDao().update(exercise)).start();
+            android.widget.Toast.makeText(this, getString(R.string.msg_saved), android.widget.Toast.LENGTH_SHORT).show();
+        });
+
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
+        builder.show();
+    }
+
     private void showEditExerciseDialog(Exercise exercise) {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.edit) + ": " + exercise.name);
@@ -228,7 +321,8 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
             getString(R.string.day_sunday), getString(R.string.day_unknown)
         };
         
-        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, displayDays);
+        android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(this, android.R.layout.simple_spinner_item, displayDays);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         daySpinner.setAdapter(adapter);
 
         // Set extraction selection
@@ -244,6 +338,39 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
         
         layout.addView(daySpinner);
 
+        // Muscle Spinner
+        final android.widget.TextView muscleLabel = new android.widget.TextView(this);
+        muscleLabel.setText(getString(R.string.label_muscle_group));
+        muscleLabel.setPadding(0, 16, 0, 0);
+        layout.addView(muscleLabel);
+
+        final android.widget.Spinner muscleSpinner = new android.widget.Spinner(this);
+        
+        String[] muscleGroups = {
+            getString(R.string.muscle_chest), getString(R.string.muscle_back), 
+            getString(R.string.muscle_legs), getString(R.string.muscle_shoulders), 
+            getString(R.string.muscle_arms), getString(R.string.muscle_core), 
+            getString(R.string.muscle_other)
+        };
+        // DB Keys matching above order
+        String[] muscleKeys = {"Chest", "Back", "Legs", "Shoulders", "Arms", "Core", "Other"};
+
+        android.widget.ArrayAdapter<String> muscleAdapter = new android.widget.ArrayAdapter<>(this, android.R.layout.simple_spinner_item, muscleGroups);
+        muscleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        muscleSpinner.setAdapter(muscleAdapter);
+        
+        // Set selection
+        String currentMuscle = exercise.muscleGroup != null ? exercise.muscleGroup : "Other";
+        int muscleSelectionIndex = 6; // Default Other
+        for (int i = 0; i < muscleKeys.length; i++) {
+            if (muscleKeys[i].equals(currentMuscle)) {
+                muscleSelectionIndex = i;
+                break;
+            }
+        }
+        muscleSpinner.setSelection(muscleSelectionIndex);
+        layout.addView(muscleSpinner);
+
         builder.setView(layout);
 
         builder.setPositiveButton(getString(R.string.save), (dialog, which) -> {
@@ -257,9 +384,15 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
             int selectedPos = daySpinner.getSelectedItemPosition();
             String newDay = dbDays[selectedPos]; // Map back to DB Key
 
+            // Muscle Group Logic
+            int musclePos = muscleSpinner.getSelectedItemPosition();
+            // DB Keys
+            String newMuscle = (musclePos >= 0 && musclePos < muscleKeys.length) ? muscleKeys[musclePos] : "Other";
+
             exercise.name = newName;
             exercise.description = newSubtitle;
             exercise.day = newDay;
+            exercise.muscleGroup = newMuscle;
 
             new Thread(() -> db.exerciseDao().update(exercise)).start();
             android.widget.Toast.makeText(this, getString(R.string.msg_saved), android.widget.Toast.LENGTH_SHORT).show();
@@ -306,6 +439,43 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
         rpeInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
         if (!showRPE) rpeInput.setVisibility(View.GONE);
         layout.addView(rpeInput);
+
+        // 1RM Estimate
+        boolean show1RM = prefs.getBoolean(SettingsActivity.KEY_SHOW_1RM, true);
+        if (show1RM) {
+            final android.widget.TextView rmLabel = new android.widget.TextView(this);
+            rmLabel.setText(getString(R.string.est_1rm, "-"));
+            rmLabel.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
+            rmLabel.setPadding(0, 24, 0, 0);
+            rmLabel.setTextSize(14);
+            rmLabel.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            layout.addView(rmLabel);
+
+            android.text.TextWatcher rmWatcher = new android.text.TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+                @Override
+                public void afterTextChanged(android.text.Editable s) {
+                    try {
+                        String wStr = weightInput.getText().toString();
+                        String rStr = repsInput.getText().toString();
+                        if (!wStr.isEmpty() && !rStr.isEmpty()) {
+                            double w = Double.parseDouble(wStr);
+                            int r = Integer.parseInt(rStr);
+                            if (r > 0) {
+                                // Epley Formula: w * (1 + r/30)
+                                double rm = w * (1.0 + (double)r / 30.0);
+                                rmLabel.setText(getString(R.string.est_1rm, String.format(java.util.Locale.getDefault(), "%.1f", rm)));
+                            }
+                        } else {
+                            rmLabel.setText(getString(R.string.est_1rm, "-"));
+                        }
+                    } catch (Exception e) {}
+                }
+            };
+            weightInput.addTextChangedListener(rmWatcher);
+            repsInput.addTextChangedListener(rmWatcher);
+        }
 
         builder.setView(layout);
 

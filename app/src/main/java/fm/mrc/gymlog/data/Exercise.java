@@ -21,10 +21,18 @@ public class Exercise {
     @ColumnInfo(name = "sort_order")
     public int sortOrder;
 
+    @ColumnInfo(name = "notes")
+    public String notes;
+
+    @ColumnInfo(name = "muscle_group")
+    public String muscleGroup;
+
     public Exercise(String name, String description, String day) {
         this.name = name;
         this.description = description;
         this.day = day;
         this.sortOrder = 0;
+        this.notes = "";
+        this.muscleGroup = "";
     }
 }

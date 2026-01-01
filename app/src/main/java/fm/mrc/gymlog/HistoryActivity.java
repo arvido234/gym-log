@@ -69,6 +69,15 @@ public class HistoryActivity extends BaseActivity implements HistoryAdapter.LogC
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         historyAdapter = new HistoryAdapter(allLogEntries, this);
+        
+        android.content.SharedPreferences prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, MODE_PRIVATE);
+        boolean showSets = prefs.getBoolean(SettingsActivity.KEY_FIELD_SETS, true);
+        boolean showReps = prefs.getBoolean(SettingsActivity.KEY_FIELD_REPS, true);
+        boolean showWeight = prefs.getBoolean(SettingsActivity.KEY_FIELD_WEIGHT, true);
+        boolean showRPE = prefs.getBoolean(SettingsActivity.KEY_FIELD_RPE, true);
+        
+        historyAdapter.setFieldVisibility(showSets, showReps, showWeight, showRPE);
+        
         recyclerView.setAdapter(historyAdapter);
 
         logEntryDao = AppDatabase.getInstance(this).logEntryDao();

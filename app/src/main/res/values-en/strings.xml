@@ -10,6 +10,12 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="settings">Settings</string>
+    <string name="note">Note</string>
+    <string name="edit_note">Edit Note</string>
+    <string name="hint_note">Enter note here...</string>
+    <string name="pref_notes">Notes</string>
+    <string name="pref_show_note_button">Enable Note Feature (Icon)</string>
+    <string name="pref_show_note_preview">Show Note Preview on Card</string>
     
     <!-- Days -->
     <string name="day_monday">Monday</string>
@@ -49,4 +55,49 @@
     <string name="hint_subtitle">Subtitle (e.g. Legs)</string>
     <string name="error_name_empty">Name cannot be empty</string>
     <string name="btn_create">Create</string>
+    <string name="pref_theme">Color Theme</string>
+    <string name="theme_blue">Blue (Default)</string>
+    <string name="theme_red">Red</string>
+    <string name="theme_green">Green</string>
+    <string name="theme_orange">Orange</string>
+    <string name="theme_purple">Purple</string>
+    <string name="pref_background">Background</string>
+    <string name="bg_charcoal">Deep Charcoal</string>
+    <string name="bg_black">OLED Black</string>
+    <string name="bg_gradient_midnight">Midnight (Gradient)</string>
+    <string name="bg_gradient_sunrise">Sunrise (Gradient)</string>
+    <string name="bg_custom">Custom Image</string>
+    <string name="btn_pick_image">Pick Image</string>
+
+    <!-- Muscle Groups -->
+    <string name="label_muscle_group">Muscle Group</string>
+    <string name="muscle_chest">Chest</string>
+    <string name="muscle_back">Back</string>
+    <string name="muscle_legs">Legs</string>
+    <string name="muscle_shoulders">Shoulders</string>
+    <string name="muscle_arms">Arms</string>
+    <string name="muscle_core">Core</string>
+    <string name="muscle_other">Other</string>
+
+    <!-- Export -->
+    <string name="pref_export_import">Data Management</string>
+    <string name="btn_export_json">Export Data (JSON)</string>
+    <string name="msg_export_success">Exported to Downloads: %1$s</string>
+    <string name="msg_export_failed">Export failed</string>
+    
+    <!-- 1RM -->
+    <string name="est_1rm">Est. 1RM: %1$s kg</string>
+    <string name="pref_show_1rm">Show 1RM Calculator</string>
+
+    <!-- Statistics -->
+    <string name="action_statistics">Statistics</string>
+    <string name="title_muscle_stats">Weekly Overview</string>
+    <string name="stats_sets_format">%1$s: %2$d sets</string>
+    <string name="stats_empty">No training data this week.</string>
+
+    <!-- Streak -->
+    <string name="pref_show_streak">Show Weekly Streak</string>
+    <string name="text_streak_message">🔥 %d Week Streak!</string>
+    <string name="text_streak_none">Train this week to start a streak!</string>
+    <string name="lbl_streak_freq">Goal: Days per week</string>
 </resources>

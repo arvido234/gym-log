@@ -27,6 +27,7 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         void onExerciseClick(Exercise exercise);
         void onQuickLogClick(Exercise exercise);
         void onHistoryClick(Exercise exercise);
+        void onNoteClick(Exercise exercise);
     }
 
     public ExerciseAdapter(AdapterCallbacks callbacks) {
@@ -65,6 +66,32 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         notifyDataSetChanged();
     }
 
+    private boolean showSets = true;
+    private boolean showReps = true;
+    private boolean showWeight = true;
+
+    public void setFieldVisibility(boolean showSets, boolean showReps, boolean showWeight) {
+        this.showSets = showSets;
+        this.showReps = showReps;
+        this.showWeight = showWeight;
+        notifyDataSetChanged();
+    }
+
+    private boolean showNotesFeature = true;
+    private boolean showInlineNote = false;
+    private boolean glassMode = false;
+
+    public void setNoteSettings(boolean showNotesFeature, boolean showInlineNote) {
+        this.showNotesFeature = showNotesFeature;
+        this.showInlineNote = showInlineNote;
+        notifyDataSetChanged();
+    }
+    
+    public void setGlassMode(boolean glassMode) {
+        this.glassMode = glassMode;
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof HeaderViewHolder) {
@@ -75,6 +102,16 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             Exercise exercise = currentItem.getExercise();
             ExerciseViewHolder exHolder = (ExerciseViewHolder) holder;
 
+            // Glass Mode Logic
+            if (glassMode) {
+                // Semi-transparent surface (Dark Glass)
+                ((androidx.cardview.widget.CardView) exHolder.itemView).setCardBackgroundColor(android.graphics.Color.parseColor("#44222222"));
+                ((androidx.cardview.widget.CardView) exHolder.itemView).setCardElevation(0);
+            } else {
+                // Default Surface
+                 ((androidx.cardview.widget.CardView) exHolder.itemView).setCardBackgroundColor(exHolder.itemView.getContext().getResources().getColor(R.color.gym_surface));
+            }
+
             exHolder.nameTextView.setText(exercise.name);
             
             if (showSubtitle && exercise.description != null && !exercise.description.isEmpty()) {
@@ -83,16 +120,50 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             } else {
                 exHolder.descriptionTextView.setVisibility(View.GONE);
             }
-
-            if (currentItem.lastLogWeight != null && currentItem.lastLogWeight > 0) {
-                String lastLog = String.format(Locale.getDefault(),
-                        "%d x %d @ %.1f kg",
-                        currentItem.lastLogSets != null ? currentItem.lastLogSets : 0,
-                        currentItem.lastLogReps != null ? currentItem.lastLogReps : 0,
-                        currentItem.lastLogWeight);
-                exHolder.lastLogTextView.setText(lastLog);
+            
+            // Inline Note Logic
+            if (showInlineNote && exercise.notes != null && !exercise.notes.isEmpty()) {
+                exHolder.noteTextView.setText(exercise.notes);
+                exHolder.noteTextView.setVisibility(View.VISIBLE);
             } else {
-                exHolder.lastLogTextView.setText("Noch keine Logs"); // Should localize this too later
+                exHolder.noteTextView.setVisibility(View.GONE);
+            }
+
+            if (currentItem.lastLogWeight != null) { 
+                StringBuilder sb = new StringBuilder();
+                int sets = currentItem.lastLogSets != null ? currentItem.lastLogSets : 0;
+                int reps = currentItem.lastLogReps != null ? currentItem.lastLogReps : 0;
+                double weight = currentItem.lastLogWeight;
+
+                boolean hasSets = showSets && sets > 0;
+                boolean hasReps = showReps && reps > 0;
+                boolean hasWeight = showWeight && weight > 0;
+
+                if (hasSets) {
+                    sb.append(sets);
+                }
+
+                if (hasSets && hasReps) {
+                    sb.append(" x ");
+                }
+                
+                if (hasReps) {
+                    sb.append(reps);
+                }
+                
+                if (hasWeight) {
+                    if (sb.length() > 0) sb.append(" @ ");
+                    sb.append(String.format(Locale.getDefault(), "%.1f kg", weight));
+                }
+                
+                if (sb.length() == 0) {
+                     // If all values are 0 or hidden (e.g. just a log entry with 0s), show Saved
+                     exHolder.lastLogTextView.setText(R.string.msg_saved);
+                } else {
+                     exHolder.lastLogTextView.setText(sb.toString());
+                }
+            } else {
+                exHolder.lastLogTextView.setText("Noch keine Logs"); 
             }
 
             exHolder.optionsButton.setOnClickListener(v -> {
@@ -121,6 +192,25 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 if (callbacks != null) callbacks.onHistoryClick(exercise);
             });
             
+
+            // Note button Logic
+            if (showNotesFeature) {
+                exHolder.noteButton.setVisibility(View.VISIBLE);
+                if (exercise.notes != null && !exercise.notes.isEmpty()) {
+                     // Highlight if note exists
+                     exHolder.noteButton.setColorFilter(android.graphics.Color.WHITE); 
+                } else {
+                     // Dim/Normal if empty
+                     exHolder.noteButton.setColorFilter(androidx.core.content.ContextCompat.getColor(exHolder.itemView.getContext(), R.color.text_secondary)); 
+                }
+    
+                exHolder.noteButton.setOnClickListener(v -> {
+                    if (callbacks != null) callbacks.onNoteClick(exercise);
+                });
+            } else {
+                exHolder.noteButton.setVisibility(View.GONE);
+            }
+
             // Item click also opens history
              exHolder.itemView.setOnClickListener(v -> {
                 if (callbacks != null) callbacks.onExerciseClick(exercise);
@@ -144,19 +234,23 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static class ExerciseViewHolder extends RecyclerView.ViewHolder {
         public TextView nameTextView;
         public TextView descriptionTextView;
+        public TextView noteTextView;
         public TextView lastLogTextView;
         public ImageButton optionsButton;
         public ImageButton quickLogButton;
         public ImageButton historyButton;
+        public ImageButton noteButton;
 
         public ExerciseViewHolder(View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.text_view_exercise_name);
             descriptionTextView = itemView.findViewById(R.id.text_view_exercise_description);
+            noteTextView = itemView.findViewById(R.id.text_view_exercise_note);
             lastLogTextView = itemView.findViewById(R.id.text_view_last_log);
             optionsButton = itemView.findViewById(R.id.button_options);
             quickLogButton = itemView.findViewById(R.id.button_quick_log);
             historyButton = itemView.findViewById(R.id.button_history);
+            noteButton = itemView.findViewById(R.id.button_note);
         }
     }
 }

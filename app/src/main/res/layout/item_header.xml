@@ -7,7 +7,7 @@
     android:paddingTop="24dp"
     android:paddingBottom="8dp"
     android:text="Montag"
-    android:textColor="@color/gym_primary"
+    android:textColor="?attr/colorPrimary"
     android:textSize="18sp"
     android:textStyle="bold"
-    android:background="@color/gym_background" />
+ />

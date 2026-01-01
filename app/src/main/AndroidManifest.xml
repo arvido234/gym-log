@@ -37,5 +37,13 @@
             android:label="Einstellungen"
             android:exported="false" />
 
+        <activity android:name=".MuscleStatsActivity"
+            android:label="@string/title_muscle_stats"
+            android:exported="false" />
+
+        <activity android:name=".StreakActivity"
+            android:label="Streak Kalender"
+            android:exported="false" />
+
     </application>
 </manifest>
