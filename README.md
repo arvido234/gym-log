@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # Gym Log - Modern Fitness Tracker 
 
 **Gym Log** is a sleek, privacy-focused Android fitness tracker designed to help you organize your weekly workout schedule and track your progress with ease. Built with a modern "Deep Charcoal" & "Electric Blue" dark mode aesthetic, it offers a clutter-free experience for serious gym-goers.
@@ -24,8 +24,9 @@ The app features a polished **Material Design 3** interface with a high-contrast
 *   **Export/History**: View your complete training history at a glance.
 
 ##  Screenshots
-
-*(Add screenshots here)*
+<img width="535" height="1105" alt="image" src="https://github.com/user-attachments/assets/f0977305-7139-4f09-84ae-f97d17f1be0b" />
+<img width="530" height="1105" alt="image" src="https://github.com/user-attachments/assets/e8985f58-b07c-43be-85d5-6f66ce906c9e" />
+<img width="533" height="1105" alt="image" src="https://github.com/user-attachments/assets/e722bbc8-3292-4b03-932a-84bf3c5ac3fb" />
 
 ##  Tech Stack
 
@@ -63,10 +64,7 @@ The app features a polished **Material Design 3** interface with a high-contrast
 * **Charts:** MPAndroidChart
 * **Architecture:** MVVM (Recommended for Room)
 
-<img width="530" height="1105" alt="image" src="https://github.com/user-attachments/assets/e8985f58-b07c-43be-85d5-6f66ce906c9e" />
-<img width="535" height="1105" alt="image" src="https://github.com/user-attachments/assets/f0977305-7139-4f09-84ae-f97d17f1be0b" />
-<img width="533" height="1105" alt="image" src="https://github.com/user-attachments/assets/e722bbc8-3292-4b03-932a-84bf3c5ac3fb" />
----
+
 
 ## 📥 Installation
 1.Install Android APP under Relase 
