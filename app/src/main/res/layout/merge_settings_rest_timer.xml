@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:text="@string/pref_auto_rest_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary"
+        android:layout_marginBottom="8dp"/>
+
+    <Switch
+        android:id="@+id/switch_enable_rest_timer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pref_enable_rest_timer"
+        android:minHeight="48dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Standard-Dauer (Sekunden)"
+            android:textColor="?android:attr/textColorSecondary"/>
+
+        <EditText
+            android:id="@+id/edit_default_rest_seconds"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:gravity="center"
+            android:background="@drawable/bg_input"
+            android:padding="8dp"
+            android:text="90"
+            android:minHeight="48dp"/>
+    </LinearLayout>
+
+</LinearLayout>

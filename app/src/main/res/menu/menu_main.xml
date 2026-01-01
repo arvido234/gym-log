@@ -8,6 +8,12 @@
         app:iconTint="@android:color/white"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_share"
+        android:title="Share"
+        android:icon="@android:drawable/ic_menu_share"
+        app:iconTint="@android:color/white"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_statistics"
         android:title="@string/action_statistics"
         app:showAsAction="never" />

@@ -27,6 +27,10 @@ public class BaseActivity extends AppCompatActivity {
             case "green": infoThemeId = R.style.Theme_GymLog_Green; break;
             case "orange": infoThemeId = R.style.Theme_GymLog_Orange; break;
             case "purple": infoThemeId = R.style.Theme_GymLog_Purple; break;
+            case "pink": infoThemeId = R.style.Theme_GymLog_Pink; break;
+            case "cyan": infoThemeId = R.style.Theme_GymLog_Cyan; break;
+            case "yellow": infoThemeId = R.style.Theme_GymLog_Yellow; break;
+            case "teal": infoThemeId = R.style.Theme_GymLog_Teal; break;
         }
         setTheme(infoThemeId);
 

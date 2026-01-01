@@ -17,6 +17,9 @@ public interface StreakCheckInDao {
     @Query("DELETE FROM streak_checkins WHERE timestamp = :timestamp")
     void deleteByTimestamp(long timestamp);
 
+    @Query("DELETE FROM streak_checkins WHERE timestamp >= :minTimestamp AND timestamp <= :maxTimestamp")
+    void deleteByDateRange(long minTimestamp, long maxTimestamp);
+
     @Query("SELECT * FROM streak_checkins")
     List<StreakCheckIn> getAll();
 

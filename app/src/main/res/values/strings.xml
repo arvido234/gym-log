@@ -62,6 +62,10 @@
     <string name="theme_green">Grün</string>
     <string name="theme_orange">Orange</string>
     <string name="theme_purple">Lila</string>
+    <string name="theme_pink">Pink</string>
+    <string name="theme_cyan">Cyan</string>
+    <string name="theme_yellow">Gelb</string>
+    <string name="theme_teal">Türkis</string>
     <string name="pref_background">Hintergrund</string>
     <string name="bg_charcoal">Deep Charcoal</string>
     <string name="bg_black">OLED Schwarz</string>
@@ -85,6 +89,9 @@
     <string name="btn_export_json">Daten exportieren (JSON)</string>
     <string name="msg_export_success">Exportiert nach Downloads: %1$s</string>
     <string name="msg_export_failed">Export fehlgeschlagen</string>
+    <string name="btn_import_json">Daten importieren (JSON)</string>
+    <string name="msg_import_success">Import erfolgreich!</string>
+    <string name="msg_import_failed">Import fehlgeschlagen: %1$s</string>
     
     <!-- 1RM -->
     <string name="est_1rm">Geschätztes 1RM: %1$s kg</string>
@@ -95,6 +102,8 @@
     <string name="title_muscle_stats">Wochen-Übersicht</string>
     <string name="stats_sets_format">%1$s: %2$d Sätze</string>
     <string name="stats_empty">Keine Trainingsdaten diese Woche.</string>
+    <string name="stats_empty_motivation">Keine Sorge, jeder Start ist schwer. Leg los!</string>
+    <string name="btn_start_training">Training starten</string>
 
     <!-- Streak -->
     <string name="pref_show_streak">Wochen-Streak anzeigen</string>
@@ -109,4 +118,20 @@
     <string name="day_fri">Fr</string>
     <string name="day_sat">Sa</string>
     <string name="day_sun">So</string>
+    
+    <!-- Reset -->
+    <string name="action_reset_app">App zurücksetzen</string>
+    <string name="dialog_reset_title">Alles löschen?</string>
+    <string name="dialog_reset_message">ACHTUNG: Dies löscht ALLE Daten, Einstellungen und Übungen unwiderruflich. Die App wird neu gestartet.</string>
+    <string name="btn_reset_confirm">Alles löschen</string>
+
+    <!-- Rest Timer -->
+    <string name="pref_auto_rest_timer">Auto-Pause Timer</string>
+    <string name="pref_enable_rest_timer">Timer nach Satz-Speicher starten</string>
+    <string name="label_rest_seconds">Pausenzeit (Sekunden)</string>
+    <string name="rest_timer_running">Pause: %d s</string>
+    <string name="rest_timer_finished">Pause beendet!</string>
+    <string name="label_sets">Sätze</string>
+    <string name="label_volume">Volumen</string>
+    <string name="stats_volume_format">%1$s: %2$.0f kg</string>
 </resources>

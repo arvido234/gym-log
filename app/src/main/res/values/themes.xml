@@ -37,6 +37,26 @@
         <item name="colorPrimary">@color/gym_primary_purple</item>
         <item name="colorSecondary">@color/gym_primary_purple</item>
     </style>
+
+    <style name="Theme.GymLog.Pink" parent="Theme.GymLog">
+        <item name="colorPrimary">@color/gym_primary_pink</item>
+        <item name="colorSecondary">@color/gym_primary_pink</item>
+    </style>
+
+    <style name="Theme.GymLog.Cyan" parent="Theme.GymLog">
+        <item name="colorPrimary">@color/gym_primary_cyan</item>
+        <item name="colorSecondary">@color/gym_primary_cyan</item>
+    </style>
+
+    <style name="Theme.GymLog.Yellow" parent="Theme.GymLog">
+        <item name="colorPrimary">@color/gym_primary_yellow</item>
+        <item name="colorSecondary">@color/gym_primary_yellow</item>
+    </style>
+
+    <style name="Theme.GymLog.Teal" parent="Theme.GymLog">
+        <item name="colorPrimary">@color/gym_primary_teal</item>
+        <item name="colorSecondary">@color/gym_primary_teal</item>
+    </style>
     
     <!-- Black Background Variant (can be combined programmatically or separate) -->
     <!-- For simplicity, we just handle background in a base activity or straightforward way -->

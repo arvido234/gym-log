@@ -38,6 +38,13 @@ public class ExerciseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.items = items;
         notifyDataSetChanged();
     }
+    
+    public Object getItem(int position) {
+        if (items != null && position >= 0 && position < items.size()) {
+            return items.get(position);
+        }
+        return null;
+    }
 
     @Override
     public int getItemViewType(int position) {

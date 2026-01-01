@@ -26,6 +26,10 @@
     <color name="gym_primary_green">#00E676</color>
     <color name="gym_primary_orange">#FF9100</color>
     <color name="gym_primary_purple">#D500F9</color>
+    <color name="gym_primary_pink">#F50057</color>
+    <color name="gym_primary_cyan">#00B8D4</color>
+    <color name="gym_primary_yellow">#FFD600</color>
+    <color name="gym_primary_teal">#00BFA5</color>
     
     <!-- Backgrounds -->
     <color name="gym_background_black">#000000</color>

@@ -33,6 +33,44 @@
         android:background="#00000000"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <!-- Rest Timer View -->
+        <FrameLayout
+            android:id="@+id/layout_rest_timer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimaryVariant"
+            android:padding="8dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+            
+            <ProgressBar
+                android:id="@+id/progress_rest_timer"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:progressDrawable="@drawable/bg_progress_bar"
+                android:layout_gravity="center_vertical" />
+                
+            <TextView
+                android:id="@+id/text_rest_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="90s"
+                android:textColor="?attr/colorOnPrimary"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+                
+            <ImageButton
+                android:id="@+id/btn_cancel_timer"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end|center_vertical"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="?attr/colorOnPrimary"/>
+        </FrameLayout>
+
         <!-- Streak View -->
         <TextView
             android:id="@+id/text_streak_indicator"

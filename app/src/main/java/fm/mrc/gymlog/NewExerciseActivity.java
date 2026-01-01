@@ -11,27 +11,9 @@ public class NewExerciseActivity extends BaseActivity {
         android.widget.EditText nameEditText = findViewById(R.id.edit_text_exercise_name);
         android.widget.EditText descriptionEditText = findViewById(R.id.edit_text_exercise_description);
         android.widget.Spinner daySpinner = findViewById(R.id.spinner_day);
+        android.widget.Spinner muscleSpinner = findViewById(R.id.spinner_muscle);
         
-        // Muscle Group Spinner
-        android.widget.Spinner muscleSpinner = new android.widget.Spinner(this);
-        // Create layout params to insert it into the layout
-        android.widget.LinearLayout.LayoutParams params = new android.widget.LinearLayout.LayoutParams(
-                android.widget.LinearLayout.LayoutParams.MATCH_PARENT, 
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, 16, 0, 16);
-        muscleSpinner.setLayoutParams(params);
-        
-        // Find the container to add the spinner (Assuming LinearLayout is the root)
-        android.view.ViewGroup container = (android.view.ViewGroup) ((android.view.ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-        // Insert before save button (assuming it's the last child, index count-1)
-        container.addView(muscleSpinner, container.getChildCount() - 1);
-        
-        // Add label
-        android.widget.TextView muscleLabel = new android.widget.TextView(this);
-        muscleLabel.setText(R.string.label_muscle_group);
-        muscleLabel.setTextAppearance(android.R.style.TextAppearance_Material_Body1);
-        container.addView(muscleLabel, container.getChildCount() - 2); // Before spinner
-
+        // Muscle Group Spinner Setup
         String[] muscleGroups = {
             getString(R.string.muscle_chest), getString(R.string.muscle_back), 
             getString(R.string.muscle_legs), getString(R.string.muscle_shoulders), 
@@ -53,6 +35,14 @@ public class NewExerciseActivity extends BaseActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         daySpinner.setAdapter(adapter);
 
+        // Initialize Text Fields
+        android.widget.EditText restInput = findViewById(R.id.edit_text_rest_seconds);
+        if (restInput != null) {
+            android.content.SharedPreferences prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, MODE_PRIVATE);
+            int defSeconds = prefs.getInt(SettingsActivity.KEY_DEFAULT_REST_SECONDS, 90);
+            restInput.setText(String.valueOf(defSeconds));
+        }
+
         saveButton.setOnClickListener(v -> {
             String name = nameEditText.getText().toString().trim();
             if (name.isEmpty()) {
@@ -64,18 +54,29 @@ public class NewExerciseActivity extends BaseActivity {
             
             int musclePos = muscleSpinner.getSelectedItemPosition();
             String selectedMuscle = (musclePos >= 0 && musclePos < muscleKeys.length) ? muscleKeys[musclePos] : "Other";
+            
+            // Rest Timer
+            android.widget.EditText restInputSave = findViewById(R.id.edit_text_rest_seconds);
+            int restSeconds = 90;
+            if (restInputSave != null) {
+                try {
+                    String r = restInputSave.getText().toString().trim();
+                    if (!r.isEmpty()) restSeconds = Integer.parseInt(r);
+                } catch (Exception e) {}
+            }
 
-            saveExercise(name, description, selectedDay, selectedMuscle);
+            saveExercise(name, description, selectedDay, selectedMuscle, restSeconds);
         });
     }
 
-    private void saveExercise(String name, String description, String day, String muscleGroup) {
+    private void saveExercise(String name, String description, String day, String muscleGroup, int restSeconds) {
         new Thread(() -> {
             try {
                 android.util.Log.d("NewExercise", "Starting saveExercise: " + name + " on " + day);
                 fm.mrc.gymlog.data.AppDatabase db = fm.mrc.gymlog.data.AppDatabase.getInstance(this);
                 fm.mrc.gymlog.data.Exercise newExercise = new fm.mrc.gymlog.data.Exercise(name, description, day);
-                newExercise.muscleGroup = muscleGroup; // Set manually
+                newExercise.muscleGroup = muscleGroup; 
+                newExercise.restTimerSeconds = restSeconds;
                 android.util.Log.d("NewExercise", "Inserting exercise...");
                 db.exerciseDao().insert(newExercise);
                 android.util.Log.d("NewExercise", "Insert successful.");

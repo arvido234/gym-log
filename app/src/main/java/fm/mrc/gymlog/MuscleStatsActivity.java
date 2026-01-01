@@ -4,11 +4,15 @@ import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Button;
 import java.util.List;
 import fm.mrc.gymlog.data.AppDatabase;
 import fm.mrc.gymlog.data.MuscleStats;
 
 public class MuscleStatsActivity extends BaseActivity {
+
+    private List<MuscleStats> currentStats;
+    private boolean showVolume = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,55 +26,103 @@ public class MuscleStatsActivity extends BaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         toolbar.setNavigationOnClickListener(v -> finish());
-
-        LinearLayout container = findViewById(R.id.stats_container);
+        
+        android.widget.RadioGroup radioGroup = findViewById(R.id.radio_group_stats_type);
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            showVolume = (checkedId == R.id.radio_volume);
+            renderStats();
+        });
 
         new Thread(() -> {
             // Last 7 days
             long startTime = System.currentTimeMillis() - (7L * 24 * 3600 * 1000);
             AppDatabase db = AppDatabase.getInstance(this);
-            List<MuscleStats> stats = db.logEntryDao().getWeeklyMuscleStats(startTime);
+            currentStats = db.logEntryDao().getWeeklyMuscleStats(startTime);
 
-            runOnUiThread(() -> {
-                if (stats == null || stats.isEmpty()) {
-                    TextView emptyView = new TextView(this);
-                    emptyView.setText(getString(R.string.stats_empty));
-                    emptyView.setPadding(0, 32, 0, 0);
-                    container.addView(emptyView);
-                    return;
-                }
-
-                // Find max sets for scaling progress bars
-                int maxSets = 0;
-                for (MuscleStats s : stats) {
-                     if (s.totalSets > maxSets) maxSets = s.totalSets;
-                }
-
-                for (MuscleStats s : stats) {
-                    // Label
-                    TextView label = new TextView(this);
-                    String muscleName = translateMuscleGroup(s.muscleGroup);
-                    label.setText(getString(R.string.stats_sets_format, muscleName, s.totalSets));
-                    label.setTextSize(16);
-                    label.setPadding(0, 16, 0, 8);
-                    container.addView(label);
-
-                    // Progress Bar
-                    ProgressBar pb = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
-                    pb.setMax(maxSets); // Scale relative to max
-                    pb.setProgress(s.totalSets);
-                    pb.setLayoutParams(new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT, 
-                            LinearLayout.LayoutParams.WRAP_CONTENT));
-                    // Tint bar with primary color
-                    pb.getProgressDrawable().setColorFilter(
-                        getThemeColor(androidx.appcompat.R.attr.colorPrimary), 
-                        android.graphics.PorterDuff.Mode.SRC_IN);
-                    
-                    container.addView(pb);
-                }
-            });
+            runOnUiThread(this::renderStats);
         }).start();
+    }
+    
+    private void renderStats() {
+        LinearLayout container = findViewById(R.id.stats_container);
+        container.removeAllViews();
+        
+        if (currentStats == null || currentStats.isEmpty()) {
+            LinearLayout emptyLayout = new LinearLayout(this);
+            emptyLayout.setOrientation(LinearLayout.VERTICAL);
+            emptyLayout.setGravity(android.view.Gravity.CENTER);
+            emptyLayout.setPadding(32, 64, 32, 32);
+
+            TextView title = new TextView(this);
+            title.setText(getString(R.string.stats_empty));
+            title.setTextSize(18);
+            title.setTypeface(null, android.graphics.Typeface.BOLD);
+            title.setGravity(android.view.Gravity.CENTER);
+            title.setTextColor(getThemeColor(androidx.appcompat.R.attr.colorPrimary));
+            
+            TextView motivation = new TextView(this);
+            motivation.setText(getString(R.string.stats_empty_motivation));
+            motivation.setGravity(android.view.Gravity.CENTER);
+            motivation.setPadding(0, 16, 0, 32);
+
+            Button btnStart = new Button(this);
+            btnStart.setText(getString(R.string.btn_start_training));
+            btnStart.setOnClickListener(v -> finish()); // Go back to Main to log
+
+            emptyLayout.addView(title);
+            emptyLayout.addView(motivation);
+            emptyLayout.addView(btnStart);
+            
+            container.addView(emptyLayout);
+            return;
+        }
+
+        double maxVal = 0;
+        for (MuscleStats s : currentStats) {
+             double val = showVolume ? s.totalVolume : s.totalSets;
+             if (val > maxVal) maxVal = val;
+        }
+        
+        // Sorting? The query sorts by Sets already. 
+        // Ideally we re-sort if showing volume, but preserving original order (by sets) might be acceptable or we sort here.
+        // Let's sort manually if showing volume, otherwise use query order.
+        List<MuscleStats> displayList = new java.util.ArrayList<>(currentStats);
+        if (showVolume) {
+            java.util.Collections.sort(displayList, (a, b) -> Double.compare(b.totalVolume, a.totalVolume));
+        }
+
+        for (MuscleStats s : displayList) {
+            double val = showVolume ? s.totalVolume : s.totalSets;
+            
+            // Label
+            TextView label = new TextView(this);
+            String muscleName = translateMuscleGroup(s.muscleGroup);
+            
+            if (showVolume) {
+                label.setText(getString(R.string.stats_volume_format, muscleName, val));
+            } else {
+                label.setText(getString(R.string.stats_sets_format, muscleName, (int)val));
+            }
+            
+            label.setTextSize(16);
+            label.setPadding(0, 16, 0, 8);
+            container.addView(label);
+
+            // Progress Bar
+            ProgressBar pb = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+            pb.setMax(100); 
+            pb.setProgress(maxVal > 0 ? (int)((val / maxVal) * 100) : 0);
+            
+            pb.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
+            // Tint bar with primary color
+            pb.getProgressDrawable().setColorFilter(
+                getThemeColor(androidx.appcompat.R.attr.colorPrimary), 
+                android.graphics.PorterDuff.Mode.SRC_IN);
+            
+            container.addView(pb);
+        }
     }
     
     // Helper to get color from attr

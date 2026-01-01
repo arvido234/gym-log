@@ -236,10 +236,29 @@ public class StreakActivity extends BaseActivity {
         boolean isLogged = logDays.contains(key);
         boolean isChecked = checkInDays.contains(key);
         
+        // Check for future date
+        Calendar now = Calendar.getInstance();
+        // Reset "now" to midnight of tomorrow to strictly compare days? 
+        // Or clearer: if (selectedYear > nowYear) || ...
+        
+        boolean isFuture = false;
+        if (year > now.get(Calendar.YEAR)) isFuture = true;
+        else if (year == now.get(Calendar.YEAR)) {
+            if (month > now.get(Calendar.MONTH)) isFuture = true;
+            else if (month == now.get(Calendar.MONTH)) {
+                if (day > now.get(Calendar.DAY_OF_MONTH)) isFuture = true;
+            }
+        }
+        
         // Temporarily remove watcher regarding to update loop
         if (textWatcher != null) editNote.removeTextChangedListener(textWatcher);
-
-        if (isLogged) {
+        
+        if (isFuture) {
+            textDateStatus.setText("Status: Future Date");
+            btnToggleCheckin.setEnabled(false);
+            btnToggleCheckin.setText("Cannot Check-in in Future");
+            editNote.setVisibility(android.view.View.GONE);
+        } else if (isLogged) {
             textDateStatus.setText("Status: Workout Logged (App)");
             btnToggleCheckin.setEnabled(false);
             btnToggleCheckin.setText("Already Logged");
@@ -272,9 +291,22 @@ public class StreakActivity extends BaseActivity {
         String key = getDateKey(selectedDateTimestamp);
 
         if (checkInDays.contains(key)) {
-            // Remove
+            // Remove - Robustly using date range for that day
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(selectedDateTimestamp);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+            long min = c.getTimeInMillis();
+            c.set(Calendar.HOUR_OF_DAY, 23);
+            c.set(Calendar.MINUTE, 59);
+            c.set(Calendar.SECOND, 59);
+            c.set(Calendar.MILLISECOND, 999);
+            long max = c.getTimeInMillis();
+
             new Thread(() -> {
-                db.streakCheckInDao().deleteByTimestamp(selectedDateTimestamp);
+                db.streakCheckInDao().deleteByDateRange(min, max);
                 runOnUiThread(this::refreshData);
                 // Trigger Widget Update
                 sendWidgetUpdate();
@@ -282,6 +314,7 @@ public class StreakActivity extends BaseActivity {
         } else {
             // Add with note
             new Thread(() -> {
+                // Ensure insert is normalized to what we expect, or just use selectedDateTimestamp which we hope is midnight
                 StreakCheckIn s = new StreakCheckIn(selectedDateTimestamp);
                 s.note = editNote.getText().toString();
                 db.streakCheckInDao().insert(s);

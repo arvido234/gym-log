@@ -26,7 +26,7 @@ public interface LogEntryDao {
     @Query("SELECT * FROM log_entries")
     List<LogEntry> getAllLogEntries();
 
-    @Query("SELECT e.muscle_group as muscleGroup, SUM(l.sets) as totalSets " +
+    @Query("SELECT e.muscle_group as muscleGroup, SUM(l.sets) as totalSets, SUM(l.sets * l.reps * l.weight) as totalVolume " +
            "FROM log_entries l " +
            "JOIN exercises e ON l.exerciseId = e.exerciseId " +
            "WHERE l.timestamp >= :startTime " +

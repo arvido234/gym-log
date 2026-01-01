@@ -27,6 +27,9 @@ public class Exercise {
     @ColumnInfo(name = "muscle_group")
     public String muscleGroup;
 
+    @ColumnInfo(name = "rest_timer_seconds")
+    public int restTimerSeconds;
+
     public Exercise(String name, String description, String day) {
         this.name = name;
         this.description = description;
@@ -34,5 +37,6 @@ public class Exercise {
         this.sortOrder = 0;
         this.notes = "";
         this.muscleGroup = "";
+        this.restTimerSeconds = 90; // Default 90 seconds
     }
 }

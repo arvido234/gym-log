@@ -159,6 +159,8 @@
             android:layout_marginBottom="8dp"
             android:minHeight="40dp"/>
 
+        <include layout="@layout/merge_settings_rest_timer" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -257,6 +259,38 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/theme_purple"
+                    android:textColor="@color/text_primary"
+                    android:paddingEnd="16dp"/>
+
+                <RadioButton
+                    android:id="@+id/radio_theme_pink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_pink"
+                    android:textColor="@color/text_primary"
+                    android:paddingEnd="16dp"/>
+
+                <RadioButton
+                    android:id="@+id/radio_theme_cyan"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_cyan"
+                    android:textColor="@color/text_primary"
+                    android:paddingEnd="16dp"/>
+
+                <RadioButton
+                    android:id="@+id/radio_theme_yellow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_yellow"
+                    android:textColor="@color/text_primary"
+                    android:paddingEnd="16dp"/>
+
+                <RadioButton
+                    android:id="@+id/radio_theme_teal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/theme_teal"
                     android:textColor="@color/text_primary"
                     android:paddingEnd="16dp"/>
 

@@ -1,55 +1,152 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="32dp"
-    android:gravity="center">
+    android:fillViewport="true"
+    android:background="?android:attr/colorBackground">
 
-    <EditText
-        android:id="@+id/edit_text_exercise_name"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Übungsname eingeben"
-        android:inputType="textCapSentences"
-        android:minHeight="48dp"
-        android:background="@android:color/white"
-        android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp"/>
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:clipToPadding="false">
 
-    <EditText
-        android:id="@+id/edit_text_exercise_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Untertitel (z.B. Beinübung)"
-        android:inputType="textCapSentences"
-        android:minHeight="48dp"
-        android:background="@android:color/white"
-        android:textColor="@android:color/black"
-        android:textColorHint="@android:color/darker_gray"
-        android:padding="12dp"
-        android:layout_marginBottom="16dp"/>
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            app:cardBackgroundColor="?android:attr/colorBackground">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Wochentag wählen:"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="8dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-    <Spinner
-        android:id="@+id/spinner_day"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@android:color/white"
-        android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_exercise_name"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:layout_marginBottom="24dp"
+                    android:gravity="center_horizontal"/>
 
-    <Button
-        android:id="@+id/button_save_exercise"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Speichern"
-        android:layout_marginTop="16dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_name"
+                    android:textSize="14sp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_marginBottom="8dp"/>
 
-</LinearLayout>
+                <EditText
+                    android:id="@+id/edit_text_exercise_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input"
+                    android:hint="@string/label_name"
+                    android:inputType="textCapSentences"
+                    android:minHeight="48dp"
+                    android:layout_marginBottom="16dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_subtitle"
+                    android:textSize="14sp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_marginBottom="8dp"/>
+
+                <EditText
+                    android:id="@+id/edit_text_exercise_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input"
+                    android:hint="@string/label_subtitle"
+                    android:inputType="textCapSentences"
+                    android:minHeight="48dp"
+                    android:layout_marginBottom="24dp"/>
+
+                <!-- Day Selection -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_day"
+                    android:textSize="14sp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_marginBottom="8dp"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input"
+                    android:layout_marginBottom="24dp">
+                    
+                    <Spinner
+                        android:id="@+id/spinner_day"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:spinnerMode="dropdown"/>
+                </FrameLayout>
+
+                <!-- Muscle Selection -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/label_muscle_group"
+                    android:textSize="14sp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_marginBottom="8dp"/>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input"
+                    android:layout_marginBottom="24dp">
+
+                    <Spinner
+                        android:id="@+id/spinner_muscle"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:spinnerMode="dropdown"/>
+                </FrameLayout>
+                
+                <!-- Rest Timer Input -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pref_auto_rest_timer"
+                    android:textSize="14sp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:layout_marginBottom="8dp"/>
+
+                <EditText
+                    android:id="@+id/edit_text_rest_seconds"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_input"
+                    android:hint="@string/label_rest_seconds"
+                    android:inputType="number"
+                    android:text="90"
+                    android:minHeight="48dp"
+                    android:layout_marginBottom="32dp"/>
+
+                <Button
+                    android:id="@+id/button_save_exercise"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="@string/save"
+                    android:textSize="16sp"
+                    android:backgroundTint="?attr/colorPrimary"
+                    android:textColor="?attr/colorOnPrimary" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+</ScrollView>
