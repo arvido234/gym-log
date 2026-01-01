@@ -22,21 +22,26 @@ import fm.mrc.gymlog.data.StreakCheckIn;
 
 public class StreakActivity extends BaseActivity {
 
-    private CalendarView calendarView;
-    private TextView textCurrentStreak;
+    private androidx.recyclerview.widget.RecyclerView recyclerCalendar;
+    private TextView textCurrentStreak, textMonthTitle, textSelectedDate, textDateStatus;
     private LinearLayout panelDateAction;
-    private TextView textSelectedDate;
-    private TextView textDateStatus;
-    private Button btnToggleCheckin;
+    private Button btnToggleCheckin, btnPrevMonth, btnNextMonth;
+    private android.widget.EditText editNote;
     private TextView textHistoryDebug;
 
     private long selectedDateTimestamp = 0;
     private AppDatabase db;
+    private Calendar currentMonthCal;
 
     // Cache
-    private Set<String> logDays = new HashSet<>(); // "yyyy-MM-dd"
-    private Set<String> checkInDays = new HashSet<>(); // "yyyy-MM-dd"
+    private Set<String> logDays = new HashSet<>(); // "yyyy-M-d"
+    private Set<String> checkInDays = new HashSet<>(); // "yyyy-M-d"
+    private Map<String, String> checkInNotes = new HashMap<>(); // "yyyy-M-d" -> note
     private int targetFrequency = 1;
+    private boolean enableNotes = true;
+    
+    // Watcher reference to remove listener temporarily
+    private android.text.TextWatcher textWatcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,59 +60,159 @@ public class StreakActivity extends BaseActivity {
 
         SharedPreferences prefs = getSharedPreferences(SettingsActivity.PREFS_NAME, MODE_PRIVATE);
         targetFrequency = prefs.getInt(SettingsActivity.KEY_STREAK_FREQUENCY, 1);
+        enableNotes = prefs.getBoolean(SettingsActivity.KEY_ENABLE_STREAK_NOTES, true);
 
-        calendarView = findViewById(R.id.calendar_view);
+        // Init views
+        recyclerCalendar = findViewById(R.id.recycler_calendar);
+        recyclerCalendar.setLayoutManager(new androidx.recyclerview.widget.GridLayoutManager(this, 7));
+        
         textCurrentStreak = findViewById(R.id.text_current_streak_large);
+        textMonthTitle = findViewById(R.id.text_month_title);
         panelDateAction = findViewById(R.id.panel_date_action);
         textSelectedDate = findViewById(R.id.text_selected_date);
         textDateStatus = findViewById(R.id.text_date_status);
+        editNote = findViewById(R.id.edit_note);
         btnToggleCheckin = findViewById(R.id.btn_toggle_checkin);
+        btnPrevMonth = findViewById(R.id.btn_prev_month);
+        btnNextMonth = findViewById(R.id.btn_next_month);
         textHistoryDebug = findViewById(R.id.text_history_debug);
+        
+        if (enableNotes) {
+            editNote.setVisibility(android.view.View.VISIBLE);
+        } else {
+            editNote.setVisibility(android.view.View.GONE);
+        }
 
-        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
-            Calendar c = Calendar.getInstance();
-            c.set(year, month, dayOfMonth, 0, 0, 0);
-            c.set(Calendar.MILLISECOND, 0);
-            selectedDateTimestamp = c.getTimeInMillis();
-            updateSelectedDatePanel(year, month, dayOfMonth);
+        currentMonthCal = Calendar.getInstance();
+        currentMonthCal.set(Calendar.DAY_OF_MONTH, 1);
+
+        btnPrevMonth.setOnClickListener(v -> {
+            currentMonthCal.add(Calendar.MONTH, -1);
+            setupCalendar();
+        });
+        btnNextMonth.setOnClickListener(v -> {
+            currentMonthCal.add(Calendar.MONTH, 1);
+            setupCalendar();
         });
 
         btnToggleCheckin.setOnClickListener(v -> toggleCheckIn());
+        
+        textWatcher = new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+                // If we have a checkin at this date, update it
+                if (selectedDateTimestamp != 0) {
+                     String key = getDateKey(selectedDateTimestamp);
+                     if (checkInDays.contains(key)) {
+                         checkInNotes.put(key, s.toString()); // Update local cache instantly
+                         saveNoteToDb(selectedDateTimestamp, s.toString());
+                     }
+                }
+            }
+        };
+
+        editNote.addTextChangedListener(textWatcher);
 
         refreshData();
     }
+    
+    private void saveNoteToDb(long ts, String note) {
+        new Thread(() -> {
+            // Delete old, insert new with note
+            db.streakCheckInDao().deleteByTimestamp(ts);
+            StreakCheckIn s = new StreakCheckIn(ts);
+            s.note = note;
+            db.streakCheckInDao().insert(s);
+            // Dont refresh full data here to avoid flicker, just background update
+        }).start();
+    }
+
+    private Map<String, Double> volumeMap = new HashMap<>();
+    private double maxVolume = 0;
 
     private void refreshData() {
         new Thread(() -> {
             List<Long> logTs = db.logEntryDao().getDistinctTimestamps();
-            List<Long> checkTs = db.streakCheckInDao().getAllCheckInTimestamps();
+            List<StreakCheckIn> checkIns = db.streakCheckInDao().getAll();
+            List<fm.mrc.gymlog.data.LogEntry> allLogs = db.logEntryDao().getAllLogEntries(); // Fetch all logs for volume
 
             logDays.clear();
             checkInDays.clear();
+            checkInNotes.clear();
+            volumeMap.clear();
+            maxVolume = 0;
 
             for (Long ts : logTs) logDays.add(getDateKey(ts));
-            for (Long ts : checkTs) checkInDays.add(getDateKey(ts));
+            for (StreakCheckIn s : checkIns) {
+                String key = getDateKey(s.timestamp);
+                checkInDays.add(key);
+                if (s.note != null) {
+                    checkInNotes.put(key, s.note);
+                }
+            }
+            
+            // Calculate Volume for Heatmap
+            for (fm.mrc.gymlog.data.LogEntry entry : allLogs) {
+                String key = getDateKey(entry.timestamp);
+                // Volume = sets * reps * weight.
+                // If weight 0, use 1? Or just Sets * Reps?
+                // Let's use strict weight volume. If weight is 0 (bodyweight), assume 1kg for visualization or user Sets * Reps?
+                // Standard Volume Load = Sets * Reps * Weight.
+                double vol = entry.sets * entry.reps * (entry.weight > 0 ? entry.weight : 1.0); 
+                volumeMap.put(key, volumeMap.getOrDefault(key, 0.0) + vol);
+            }
+            
+            // Find Max Volume
+            for (Double v : volumeMap.values()) {
+                if (v > maxVolume) maxVolume = v;
+            }
+            
+            // For calculation, we still need just timestamps.
+            List<Long> checkTs = new java.util.ArrayList<>();
+            for (StreakCheckIn s : checkIns) checkTs.add(s.timestamp);
 
             int streak = fm.mrc.gymlog.util.StreakCalculator.calculateWeeklyStreak(logTs, checkTs, targetFrequency);
 
-            StringBuilder historyBuilder = new StringBuilder();
-            // Build Text History (Last 12 Weeks)
-            // Just reuse simple logic or create a proper week map
-            // Simplified: Just listing logic
-            historyBuilder.append("Target: ").append(targetFrequency).append(" days/week\n\n");
-            
-            // ... (Complex history logic omitted for brevity, focusing on core functionality first)
-            
             runOnUiThread(() -> {
                 textCurrentStreak.setText(getString(R.string.text_streak_message, streak));
-                // Update panel if something selected
-                if (selectedDateTimestamp != 0) {
-                     Calendar c = Calendar.getInstance();
-                     c.setTimeInMillis(selectedDateTimestamp);
-                     updateSelectedDatePanel(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-                }
+                setupCalendar();
+                // Update panel if selected
+                if (selectedDateTimestamp != 0) updateSelectedDatePanel(selectedDateTimestamp);
             });
         }).start();
+    }
+
+    private void setupCalendar() {
+        // ... (existing code for month title)
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale.getDefault());
+        textMonthTitle.setText(sdf.format(currentMonthCal.getTime()));
+
+        List<Long> days = new ArrayList<>();
+        Calendar c = (Calendar) currentMonthCal.clone();
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK); 
+        int offset = dayOfWeek - Calendar.MONDAY;
+        if (offset < 0) offset += 7;
+        
+        for (int i = 0; i < offset; i++) days.add(0L);
+        
+        int maxDay = c.getActualMaximum(Calendar.DAY_OF_MONTH);
+        for (int i = 1; i <= maxDay; i++) {
+            days.add(c.getTimeInMillis());
+            c.add(Calendar.DAY_OF_MONTH, 1);
+        }
+
+        CalendarAdapter adapter = new CalendarAdapter(days, logDays, checkInDays, this::onDateSelected);
+        adapter.setVolumeData(volumeMap, maxVolume); // Pass volume data
+        adapter.setSelectedTimestamp(selectedDateTimestamp); 
+        recyclerCalendar.setAdapter(adapter);
+    }
+    
+    private void onDateSelected(long ts) {
+        selectedDateTimestamp = ts;
+        updateSelectedDatePanel(ts);
     }
 
     private String getDateKey(long ts) {
@@ -116,54 +221,82 @@ public class StreakActivity extends BaseActivity {
         return c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);
     }
 
-    private void updateSelectedDatePanel(int year, int month, int day) {
+    private void updateSelectedDatePanel(long ts) {
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(ts);
+        
         panelDateAction.setVisibility(android.view.View.VISIBLE);
-        String key = year + "-" + month + "-" + day;
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        
         textSelectedDate.setText(String.format("%d-%02d-%02d", year, month + 1, day));
+        String key = year + "-" + month + "-" + day;
 
         boolean isLogged = logDays.contains(key);
         boolean isChecked = checkInDays.contains(key);
+        
+        // Temporarily remove watcher regarding to update loop
+        if (textWatcher != null) editNote.removeTextChangedListener(textWatcher);
 
         if (isLogged) {
             textDateStatus.setText("Status: Workout Logged (App)");
             btnToggleCheckin.setEnabled(false);
             btnToggleCheckin.setText("Already Logged");
+            editNote.setVisibility(android.view.View.GONE); // Cant note on logs yet
+            editNote.setText("");
         } else if (isChecked) {
             textDateStatus.setText("Status: Manual Check-in");
             btnToggleCheckin.setEnabled(true);
             btnToggleCheckin.setText("Remove Check-in");
+            if (enableNotes) {
+                editNote.setVisibility(android.view.View.VISIBLE);
+                String note = checkInNotes.get(key);
+                editNote.setText(note != null ? note : "");
+            }
         } else {
             textDateStatus.setText("Status: No Activity");
             btnToggleCheckin.setEnabled(true);
             btnToggleCheckin.setText("Mark as Trained");
+             if (enableNotes) {
+                editNote.setVisibility(android.view.View.VISIBLE);
+                editNote.setText("");
+            }
         }
+        
+        if (textWatcher != null) editNote.addTextChangedListener(textWatcher);
     }
 
     private void toggleCheckIn() {
         if (selectedDateTimestamp == 0) return;
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(selectedDateTimestamp);
-        String key = c.get(Calendar.YEAR) + "-" + c.get(Calendar.MONTH) + "-" + c.get(Calendar.DAY_OF_MONTH);
+        String key = getDateKey(selectedDateTimestamp);
 
         if (checkInDays.contains(key)) {
             // Remove
             new Thread(() -> {
-                // Not ideal to delete by timestamp range, but for now we assume exact-ish logic or simply delete entries on this day
-                // BETTER: Add a deleteByTimestampRange to DAO or just delete exact if we stored exact
-                // My DAO: deleteByTimestamp(long ts). But the stored timestamp might differ by hours? 
-                // Wait, I created CheckIn with specific TS. If I create it via this Activity, I should normalize it to Midnight.
-                
-                // Let's normalize TS to start of day
                 db.streakCheckInDao().deleteByTimestamp(selectedDateTimestamp);
                 runOnUiThread(this::refreshData);
+                // Trigger Widget Update
+                sendWidgetUpdate();
             }).start();
         } else {
-            // Add
+            // Add with note
             new Thread(() -> {
                 StreakCheckIn s = new StreakCheckIn(selectedDateTimestamp);
+                s.note = editNote.getText().toString();
                 db.streakCheckInDao().insert(s);
                 runOnUiThread(this::refreshData);
+                sendWidgetUpdate();
             }).start();
         }
+    }
+
+    private void sendWidgetUpdate() {
+        android.content.Intent intent = new android.content.Intent(this, fm.mrc.gymlog.widget.StreakWidget.class);
+        intent.setAction(android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = android.appwidget.AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(
+                new android.content.ComponentName(getApplication(), fm.mrc.gymlog.widget.StreakWidget.class));
+        intent.putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        sendBroadcast(intent);
     }
 }

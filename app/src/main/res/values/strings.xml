@@ -101,4 +101,12 @@
     <string name="text_streak_message">🔥 %d Wochen Streak!</string>
     <string name="text_streak_none">Trainiere diese Woche für den Streak!</string>
     <string name="lbl_streak_freq">Ziel: Trainingstage pro Woche</string>
+    <string name="pref_enable_streak_notes">Notizen für Streak aktivieren</string>
+    <string name="day_mon">Mo</string>
+    <string name="day_tue">Di</string>
+    <string name="day_wed">Mi</string>
+    <string name="day_thu">Do</string>
+    <string name="day_fri">Fr</string>
+    <string name="day_sat">Sa</string>
+    <string name="day_sun">So</string>
 </resources>

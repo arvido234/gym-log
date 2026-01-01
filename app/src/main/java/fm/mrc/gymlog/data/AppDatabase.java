@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase;
 
 // ... (alle anderen Imports)
 
-@Database(entities = {Exercise.class, LogEntry.class, WorkoutDay.class, DayExerciseCrossRef.class, StreakCheckIn.class}, version = 8, exportSchema = false)
+@Database(entities = {Exercise.class, LogEntry.class, WorkoutDay.class, DayExerciseCrossRef.class, StreakCheckIn.class}, version = 9, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance;
 

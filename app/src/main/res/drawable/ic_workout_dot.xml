@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0"
+    android:tint="?attr/colorPrimary">
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M20.57,14.86L22,13.43L20.57,12L17,15.57L8.43,7L12,3.43L10.57,2L9.14,3.43L7.71,2L5.57,4.14L4.14,5.57L2,7.71L3.43,9.14L4.86,7.71L13.43,16.29L14.86,17.71L16.29,19.14L18.43,21.29L19.86,19.86L22,22L20.57,20.57L19.14,22L17.71,20.57L19.14,19.14L20.57,17.71L22,16.29L20.57,14.86ZM12,6.29L13.43,7.71L14.14,7L13.43,6.29L12,6.29Z"/>
+    <!-- Simplified dumbbell shape representation, actually using a simple dot or standard icon might be safer if path is complex -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M19,13h-2V9h-2v4H5V5h4V3H5C3.9,3 3,3.9 3,5v14c0,1.1 0.9,2 2,2h14c1.1,0 2,-0.9 2,-2v-6H19z"/>
+    <!-- actually let's use a circle/dot for simplicity -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M12,2C6.47,2 2,6.47 2,12s4.47,10 10,10 10,-4.47 10,-10S17.53,2 12,2z"/>
+</vector>

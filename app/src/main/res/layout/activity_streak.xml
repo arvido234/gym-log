@@ -41,20 +41,66 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
             
-            <CalendarView
-                android:id="@+id/calendar_view"
+            <!-- Month Control -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                 android:layout_marginBottom="8dp">
+                
+                <Button
+                    android:id="@+id/btn_prev_month"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="&lt;"/>
+                    
+                <TextView
+                    android:id="@+id/text_month_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="October 2023"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+                    
+                <Button
+                    android:id="@+id/btn_next_month"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:text="&gt;"/>
+            </LinearLayout>
+
+            <!-- Weekday Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="7"
+                android:layout_marginBottom="4dp">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/day_mon" android:gravity="center" android:textStyle="bold" android:textColor="?attr/colorOnSurface"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/day_tue" android:gravity="center" android:textStyle="bold" android:textColor="?attr/colorOnSurface"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/day_wed" android:gravity="center" android:textStyle="bold" android:textColor="?attr/colorOnSurface"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/day_thu" android:gravity="center" android:textStyle="bold" android:textColor="?attr/colorOnSurface"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/day_fri" android:gravity="center" android:textStyle="bold" android:textColor="?attr/colorOnSurface"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/day_sat" android:gravity="center" android:textStyle="bold" android:textColor="?attr/colorOnSurface"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/day_sun" android:gravity="center" android:textStyle="bold" android:textColor="?attr/colorOnSurface"/>
+            </LinearLayout>
+
+            <!-- Custom Calendar Grid -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_calendar"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
-                android:layout_marginBottom="16dp"
-                />
-            <!-- bg_card might not exist, using standard background or none -->
+                android:layout_marginBottom="16dp"/>
 
             <LinearLayout
                 android:id="@+id/panel_date_action"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="#11000000"
+                android:background="#11FFFFFF"
                 android:padding="12dp"
                 android:visibility="gone">
                 
@@ -71,6 +117,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Status: No Activity"
+                    android:layout_marginBottom="8dp"/>
+                    
+                <EditText
+                    android:id="@+id/edit_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Notiz hinzufügen (z.B. Cardio)"
+                    android:visibility="gone"
                     android:layout_marginBottom="8dp"/>
 
                 <Button

@@ -1,24 +1,25 @@
 package fm.mrc.gymlog.data;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-
 import java.util.List;
 
 @Dao
 public interface StreakCheckInDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(StreakCheckIn checkIn);
 
-    @Delete
-    void delete(StreakCheckIn checkIn);
+    @Query("DELETE FROM streak_checkins WHERE id = :id")
+    void delete(long id);
 
-    @Query("SELECT timestamp FROM streak_checkins ORDER BY timestamp DESC")
+    @Query("DELETE FROM streak_checkins WHERE timestamp = :timestamp")
+    void deleteByTimestamp(long timestamp);
+
+    @Query("SELECT * FROM streak_checkins")
+    List<StreakCheckIn> getAll();
+
+    @Query("SELECT timestamp FROM streak_checkins")
     List<Long> getAllCheckInTimestamps();
-    
-    // Delete by timestamp range or exact match might be useful, but for now simple insert/delete
-    @Query("DELETE FROM streak_checkins WHERE timestamp = :ts")
-    void deleteByTimestamp(long ts);
 }

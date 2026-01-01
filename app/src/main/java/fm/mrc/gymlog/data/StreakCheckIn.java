@@ -9,6 +9,7 @@ public class StreakCheckIn {
     public long id;
 
     public long timestamp;
+    public String note;
 
     public StreakCheckIn(long timestamp) {
         this.timestamp = timestamp;

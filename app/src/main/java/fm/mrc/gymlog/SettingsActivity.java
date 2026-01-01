@@ -24,6 +24,7 @@ public class SettingsActivity extends BaseActivity {
     public static final String KEY_GLASS_MODE = "glass_mode";
     public static final String KEY_SHOW_STREAK = "show_streak";
     public static final String KEY_STREAK_FREQUENCY = "streak_frequency";
+    public static final String KEY_ENABLE_STREAK_NOTES = "enable_streak_notes";
 
     public static final String KEY_THEME = "app_theme";
     public static final String KEY_BACKGROUND_TYPE = "bg_type"; // "charcoal", "black", "midnight", "sunrise", "custom"
@@ -35,7 +36,7 @@ public class SettingsActivity extends BaseActivity {
     private RadioButton radioGerman, radioEnglish;
     private RadioButton radioThemeBlue, radioThemeRed, radioThemeGreen, radioThemeOrange, radioThemePurple;
     private RadioButton radioBgCharcoal, radioBgBlack;
-    private Switch switchSets, switchReps, switchWeight, switchRPE, switchShow1RM, switchShowStreak;
+    private Switch switchSets, switchReps, switchWeight, switchRPE, switchShow1RM, switchShowStreak, switchEnableStreakNotes;
 
     private final androidx.activity.result.ActivityResultLauncher<android.content.Intent> pickImageLauncher = registerForActivityResult(
             new androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult(),
@@ -68,7 +69,10 @@ public class SettingsActivity extends BaseActivity {
         switchWeight = findViewById(R.id.switch_field_weight);
         switchRPE = findViewById(R.id.switch_field_rpe);
         switchShow1RM = findViewById(R.id.switch_show_1rm);
+        
+        // Correct initialization
         switchShowStreak = findViewById(R.id.switch_show_streak);
+        switchEnableStreakNotes = findViewById(R.id.switch_enable_streak_notes);
 
         RadioGroup languageGroup = findViewById(R.id.radio_group_language);
         radioGerman = findViewById(R.id.radio_german);
@@ -100,6 +104,7 @@ public class SettingsActivity extends BaseActivity {
         switchRPE.setChecked(prefs.getBoolean(KEY_FIELD_RPE, true));
         switchShow1RM.setChecked(prefs.getBoolean(KEY_SHOW_1RM, true));
         switchShowStreak.setChecked(prefs.getBoolean(KEY_SHOW_STREAK, true));
+        switchEnableStreakNotes.setChecked(prefs.getBoolean(KEY_ENABLE_STREAK_NOTES, true));
         
         String lang = prefs.getString(KEY_LANGUAGE, "de");
         if ("en".equals(lang)) {
@@ -144,9 +149,6 @@ public class SettingsActivity extends BaseActivity {
             radioBgCustom.setChecked(true);
         });
 
-        // Add listener to main group to uncheck custom if another is selected
-        // ...
-        
         // Frequency Spinner
         android.widget.Spinner spinnerFreq = findViewById(R.id.spinner_streak_freq);
         Integer[] freqs = {1, 2, 3, 4, 5, 6, 7};
@@ -158,10 +160,6 @@ public class SettingsActivity extends BaseActivity {
         // Index is freq-1 (1->0, 2->1)
         if (savedFreq >= 1 && savedFreq <= 7) spinnerFreq.setSelection(savedFreq - 1);
         
-        // ... in saveOnClickListener
-        
-        // Removed dangling line
-
         btnPickImage.setOnClickListener(v -> {
             android.content.Intent intent = new android.content.Intent(android.content.Intent.ACTION_OPEN_DOCUMENT);
             intent.addCategory(android.content.Intent.CATEGORY_OPENABLE);
@@ -169,16 +167,22 @@ public class SettingsActivity extends BaseActivity {
             pickImageLauncher.launch(intent);
         });
 
-        // Export Button Logic
+        // Export Button Logic (JSON)
         android.widget.Button exportButton = new android.widget.Button(this);
         exportButton.setText(R.string.btn_export_json);
         exportButton.setOnClickListener(v -> exportData());
         
-        // Add to layout before Save button (Dynamically find correct index or just append to linear layout before save button)
+        // Export CSV Button
+        android.widget.Button exportCsvButton = new android.widget.Button(this);
+        exportCsvButton.setText("Export CSV");
+        exportCsvButton.setOnClickListener(v -> exportCsvData());
+        
         android.widget.LinearLayout rootLayout = (android.widget.LinearLayout) saveButton.getParent();
         rootLayout.addView(exportButton, rootLayout.indexOfChild(saveButton));
+        rootLayout.addView(exportCsvButton, rootLayout.indexOfChild(saveButton));
 
         saveButton.setOnClickListener(v -> {
+            // ... (save logic)
             SharedPreferences.Editor editor = prefs.edit();
             editor.putBoolean(KEY_SHOW_SUBTITLE, switchShowSubtitle.isChecked());
             editor.putBoolean(KEY_ENABLE_NOTES, switchEnableNotes.isChecked());
@@ -191,6 +195,7 @@ public class SettingsActivity extends BaseActivity {
             editor.putBoolean(KEY_FIELD_RPE, switchRPE.isChecked());
             editor.putBoolean(KEY_SHOW_1RM, switchShow1RM.isChecked());
             editor.putBoolean(KEY_SHOW_STREAK, switchShowStreak.isChecked());
+            editor.putBoolean(KEY_ENABLE_STREAK_NOTES, switchEnableStreakNotes.isChecked());
             
             String selectedLang = radioEnglish.isChecked() ? "en" : "de";
             editor.putString(KEY_LANGUAGE, selectedLang);
@@ -210,7 +215,6 @@ public class SettingsActivity extends BaseActivity {
             else if (radioBgCustom.isChecked()) selectedBg = "custom";
             
             editor.putString(KEY_BACKGROUND_TYPE, selectedBg);
-            // Sync legacy key just in case
             editor.putBoolean(KEY_BACKGROUND_BLACK, "black".equals(selectedBg));
             
             android.widget.Spinner sFreq = findViewById(R.id.spinner_streak_freq);
@@ -220,7 +224,6 @@ public class SettingsActivity extends BaseActivity {
 
             editor.apply();
 
-            // Restart to apply changes
             android.content.Intent i = getBaseContext().getPackageManager()
                     .getLaunchIntentForPackage(getBaseContext().getPackageName());
             if (i != null) {
@@ -232,13 +235,13 @@ public class SettingsActivity extends BaseActivity {
     }
 
     private void exportData() {
-        new Thread(() -> {
+        // ... (JSON export logic as before)
+         new Thread(() -> {
             try {
                 fm.mrc.gymlog.data.AppDatabase db = fm.mrc.gymlog.data.AppDatabase.getInstance(this);
                 java.util.List<fm.mrc.gymlog.data.Exercise> exercises = db.exerciseDao().getAllExercisesSync();
                 java.util.List<fm.mrc.gymlog.data.LogEntry> logs = db.logEntryDao().getAllLogEntries();
                 
-                // Simple manually constructed JSON
                 StringBuilder json = new StringBuilder();
                 json.append("{ \"exercises\": [");
                 for (int i = 0; i < exercises.size(); i++) {
@@ -252,13 +255,12 @@ public class SettingsActivity extends BaseActivity {
                 json.append("], \"logs\": [");
                 for (int i = 0; i < logs.size(); i++) {
                     fm.mrc.gymlog.data.LogEntry l = logs.get(i);
-                     json.append(String.format("{\"exId\":%d, \"sets\":%d, \"reps\":%d, \"weight\":%.1f, \"ts\":%d}", 
+                    json.append(String.format("{\"exId\":%d, \"sets\":%d, \"reps\":%d, \"weight\":%.1f, \"ts\":%d}", 
                         l.exerciseId, l.sets, l.reps, l.weight, l.timestamp));
                     if (i < logs.size() - 1) json.append(",");
                 }
                 json.append("] }");
                 
-                // Save to Downloads
                 String filename = "gymlog_backup_" + System.currentTimeMillis() + ".json";
                 java.io.File path = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS);
                 java.io.File file = new java.io.File(path, filename);
@@ -272,6 +274,51 @@ public class SettingsActivity extends BaseActivity {
             } catch (Exception e) {
                 e.printStackTrace();
                 runOnUiThread(() -> android.widget.Toast.makeText(this, getString(R.string.msg_export_failed) + ": " + e.getMessage(), android.widget.Toast.LENGTH_SHORT).show());
+            }
+        }).start();
+    }
+    
+    private void exportCsvData() {
+        new Thread(() -> {
+            try {
+                fm.mrc.gymlog.data.AppDatabase db = fm.mrc.gymlog.data.AppDatabase.getInstance(this);
+                java.util.List<fm.mrc.gymlog.data.Exercise> exercises = db.exerciseDao().getAllExercisesSync();
+                java.util.List<fm.mrc.gymlog.data.LogEntry> logs = db.logEntryDao().getAllLogEntries();
+                
+                // Map ID -> Name
+                java.util.Map<Long, String> exMap = new java.util.HashMap<>();
+                for (fm.mrc.gymlog.data.Exercise e : exercises) exMap.put(e.exerciseId, e.name);
+                
+                StringBuilder csv = new StringBuilder();
+                csv.append("Date,Time,Exercise,Sets,Reps,Weight,RPE\n");
+                
+                java.text.SimpleDateFormat sdfDate = new java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault());
+                java.text.SimpleDateFormat sdfTime = new java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault());
+                
+                for (fm.mrc.gymlog.data.LogEntry l : logs) {
+                    String date = sdfDate.format(l.timestamp);
+                    String time = sdfTime.format(l.timestamp);
+                    String name = exMap.getOrDefault(l.exerciseId, "Unknown");
+                    // Escape CSV
+                    if (name.contains(",")) name = "\"" + name + "\"";
+                    
+                    csv.append(String.format(java.util.Locale.US, "%s,%s,%s,%d,%d,%.1f,%d\n", 
+                        date, time, name, l.sets, l.reps, l.weight, l.rpe));
+                }
+                
+                String filename = "gymlog_export_" + System.currentTimeMillis() + ".csv";
+                java.io.File path = android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS);
+                java.io.File file = new java.io.File(path, filename);
+                
+                java.io.FileOutputStream fos = new java.io.FileOutputStream(file);
+                fos.write(csv.toString().getBytes());
+                fos.close();
+                
+                runOnUiThread(() -> android.widget.Toast.makeText(this, "CSV Export saved to Downloads/" + filename, android.widget.Toast.LENGTH_LONG).show());
+                
+            } catch (Exception e) {
+                 e.printStackTrace();
+                 runOnUiThread(() -> android.widget.Toast.makeText(this, "CSV Export failed: " + e.getMessage(), android.widget.Toast.LENGTH_SHORT).show());
             }
         }).start();
     }

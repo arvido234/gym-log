@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="4dp"
+    android:background="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/text_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="12"
+        android:textSize="14sp"
+        android:textColor="?attr/colorOnSurface"/>
+        
+    <ImageView
+        android:id="@+id/icon_status"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="2dp"
+        android:visibility="gone"
+        android:src="@drawable/ic_check_circle"
+        android:alpha="0.8"/>
+        <!-- I'll use a standard android drawable or create a vector if needed. 
+             Using standard drawables for now or shape -->
+
+</LinearLayout>

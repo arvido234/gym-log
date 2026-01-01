@@ -180,6 +180,16 @@
         </LinearLayout>
         
         <Switch
+            android:id="@+id/switch_enable_streak_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/pref_enable_streak_notes"
+            android:textColor="@color/text_primary"
+            android:checked="true"
+            android:layout_marginBottom="24dp"
+            android:minHeight="40dp"/>
+        
+        <Switch
             android:id="@+id/switch_glass_mode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

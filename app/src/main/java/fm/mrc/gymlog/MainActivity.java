@@ -440,10 +440,10 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
         if (!showRPE) rpeInput.setVisibility(View.GONE);
         layout.addView(rpeInput);
 
-        // 1RM Estimate
+        // 1RM Estimate linked to existing inputs
+        final android.widget.TextView rmLabel = new android.widget.TextView(this);
         boolean show1RM = prefs.getBoolean(SettingsActivity.KEY_SHOW_1RM, true);
         if (show1RM) {
-            final android.widget.TextView rmLabel = new android.widget.TextView(this);
             rmLabel.setText(getString(R.string.est_1rm, "-"));
             rmLabel.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
             rmLabel.setPadding(0, 24, 0, 0);
@@ -463,7 +463,6 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
                             double w = Double.parseDouble(wStr);
                             int r = Integer.parseInt(rStr);
                             if (r > 0) {
-                                // Epley Formula: w * (1 + r/30)
                                 double rm = w * (1.0 + (double)r / 30.0);
                                 rmLabel.setText(getString(R.string.est_1rm, String.format(java.util.Locale.getDefault(), "%.1f", rm)));
                             }
@@ -478,6 +477,23 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
         }
 
         builder.setView(layout);
+        
+        // Container for last log entry to be used in Save button
+        final java.util.concurrent.atomic.AtomicReference<fm.mrc.gymlog.data.LogEntry> lastLogRef = new java.util.concurrent.atomic.AtomicReference<>();
+        
+        // Load last log and set hints
+        new Thread(() -> {
+            fm.mrc.gymlog.data.LogEntry lastEntry = db.logEntryDao().getLatestLogEntry(exercise.exerciseId);
+            if (lastEntry != null) {
+                lastLogRef.set(lastEntry);
+                runOnUiThread(() -> {
+                    if (showSets) setsInput.setHint(String.valueOf(lastEntry.sets));
+                    if (showReps) repsInput.setHint(String.valueOf(lastEntry.reps));
+                    if (showWeight) weightInput.setHint(String.valueOf(lastEntry.weight));
+                    if (showRPE) rpeInput.setHint(String.valueOf(lastEntry.rpe));
+                });
+            }
+        }).start();
 
         builder.setPositiveButton(getString(R.string.save), (dialog, which) -> {
             try {
@@ -485,18 +501,43 @@ public class MainActivity extends BaseActivity implements ExerciseAdapter.Adapte
                 String repsStr = repsInput.getText().toString();
                 String weightStr = weightInput.getText().toString();
                 String rpeStr = rpeInput.getText().toString();
+                
+                fm.mrc.gymlog.data.LogEntry last = lastLogRef.get();
 
-                if ((showSets && setsStr.isEmpty()) || 
-                    (showReps && repsStr.isEmpty()) || 
-                    (showWeight && weightStr.isEmpty())) {
+                // Determine final values: use Input if present, else Default if present, else 0
+                int sets = 0;
+                if (showSets) {
+                    if (!setsStr.isEmpty()) sets = Integer.parseInt(setsStr);
+                    else if (last != null) sets = last.sets;
+                }
+                
+                int reps = 0;
+                if (showReps) {
+                    if (!repsStr.isEmpty()) reps = Integer.parseInt(repsStr);
+                    else if (last != null) reps = last.reps;
+                }
+                
+                double weight = 0.0;
+                if (showWeight) {
+                    if (!weightStr.isEmpty()) weight = Double.parseDouble(weightStr);
+                    else if (last != null) weight = last.weight;
+                }
+                
+                int rpe = 0;
+                if (showRPE) {
+                    if (!rpeStr.isEmpty()) rpe = Integer.parseInt(rpeStr);
+                    else if (last != null) rpe = last.rpe;
+                }
+
+                // Check required fields (must be > 0 if shown, unless 0 is valid for some?)
+                boolean invalid = false;
+                if (showSets && sets <= 0) invalid = true;
+                if (showReps && reps <= 0) invalid = true;
+                
+                if (invalid) {
                     android.widget.Toast.makeText(this, getString(R.string.req_fields), android.widget.Toast.LENGTH_SHORT).show();
                     return;
                 }
-
-                int sets = (showSets && !setsStr.isEmpty()) ? Integer.parseInt(setsStr) : 0;
-                int reps = (showReps && !repsStr.isEmpty()) ? Integer.parseInt(repsStr) : 0;
-                double weight = (showWeight && !weightStr.isEmpty()) ? Double.parseDouble(weightStr) : 0.0;
-                int rpe = (showRPE && !rpeStr.isEmpty()) ? Integer.parseInt(rpeStr) : 0;
 
                 fm.mrc.gymlog.data.LogEntry entry = new fm.mrc.gymlog.data.LogEntry(
                         exercise.exerciseId, System.currentTimeMillis(), sets, reps, weight, rpe);

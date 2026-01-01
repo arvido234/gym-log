@@ -35,4 +35,7 @@ public interface LogEntryDao {
     List<MuscleStats> getWeeklyMuscleStats(long startTime);
     @Query("SELECT DISTINCT timestamp FROM log_entries ORDER BY timestamp DESC")
     List<Long> getDistinctTimestamps();
+
+    @Query("SELECT * FROM log_entries WHERE exerciseId = :exerciseId ORDER BY timestamp DESC LIMIT 1")
+    LogEntry getLatestLogEntry(long exerciseId);
 }
