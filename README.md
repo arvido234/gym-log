@@ -30,3 +30,9 @@
 1. Clone the repository:
    ```bash
    git clone [https://github.com/DEIN_NUTZERNAME/Gym-Log.git](https://github.com/DEIN_NUTZERNAME/Gym-Log.git)
+
+
+## Support the Project 🥤
+If Gym Log helps you stay focused in the gym, consider buying me a "digital protein shake" to support further development (new features, iOS version, etc.).
+
+[Donate via WhyDonate](https://whydonate.com/de/fundraising/gymlog)
